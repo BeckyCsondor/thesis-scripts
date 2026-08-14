@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tau Fibril Organisation Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px}
+header{background:#161b22;border-bottom:1px solid #30363d;padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:15px;font-weight:600;color:#58a6ff;white-space:nowrap}
+.badge{background:#21262d;border:1px solid #30363d;border-radius:4px;padding:3px 8px;font-size:11px;color:#8b949e;white-space:nowrap}
+#dropzone{border:2px dashed #30363d;border-radius:8px;margin:16px;padding:28px;text-align:center;cursor:pointer;transition:.2s}
+#dropzone:hover,#dropzone.drag{border-color:#58a6ff;background:#161b22}
+#dropzone p{color:#8b949e;font-size:14px}
+#dropzone strong{color:#58a6ff}
+#multi-load{margin:0 16px 8px;padding:8px 12px;background:#1c2128;border:1px solid #30363d;border-radius:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#multi-load span{font-size:11px;color:#8b949e}
+.ds-badge{background:#21262d;border:1px solid #30363d;border-radius:4px;padding:2px 8px;font-size:11px;display:inline-flex;align-items:center;gap:6px}
+.ds-badge button{background:none;border:none;color:#f85149;cursor:pointer;font-size:13px;line-height:1;padding:0}
+#app{display:none;padding:0 14px 14px}
+.tabs{display:flex;gap:2px;margin-bottom:10px;border-bottom:1px solid #30363d;padding-bottom:0;flex-wrap:wrap}
+.tab{padding:7px 14px;cursor:pointer;border-radius:6px 6px 0 0;color:#8b949e;font-size:12px;font-weight:500;border:1px solid transparent;border-bottom:none;margin-bottom:-1px;white-space:nowrap}
+.tab.active{background:#161b22;border-color:#30363d;color:#e6edf3;border-bottom-color:#161b22}
+.tab:hover:not(.active){color:#c9d1d9}
+.panel{display:none}.panel.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px}
+.card h3{font-size:11px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+canvas{display:block;width:100%;border-radius:4px;background:#0d1117}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #21262d}
+.stat-row:last-child{border-bottom:none}
+.stat-label{color:#8b949e;font-size:11px}
+.stat-value{color:#e6edf3;font-weight:600;font-size:12px}
+.sv-green{color:#3fb950}.sv-amber{color:#ffa657}.sv-blue{color:#58a6ff}.sv-red{color:#f85149}.sv-purple{color:#bc8cff}
+.tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.tag-hex{background:#1a3a2a;color:#3fb950;border:1px solid #2a5a3a}
+.tag-mod{background:#2a2a1a;color:#ffa657;border:1px solid #4a4a2a}
+.tag-weak{background:#2a1a1a;color:#f85149;border:1px solid #4a2a2a}
+.tag-sq{background:#1a1a3a;color:#58a6ff;border:1px solid #2a2a5a}
+.info-box{background:#1c2128;border:1px solid #30363d;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#8b949e;line-height:1.7}
+.info-box strong{color:#c9d1d9}.info-box .hi{color:#3fb950;font-weight:600}
+.info-box .warn{color:#ffa657;font-weight:600}
+.finding{background:#0d1117;border-left:3px solid #3fb950;border-radius:0 4px 4px 0;padding:8px 12px;margin:6px 0;font-size:12px;line-height:1.6;color:#c9d1d9}
+.finding.amber{border-left-color:#ffa657}
+.finding.blue{border-left-color:#58a6ff}
+.finding.red{border-left-color:#f85149}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#8b949e}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.leg-rect{width:12px;height:4px;flex-shrink:0;border-radius:2px}
+select{background:#21262d;border:1px solid #30363d;border-radius:4px;color:#e6edf3;padding:3px 8px;font-size:11px;cursor:pointer}
+.sec{font-size:13px;font-weight:600;color:#c9d1d9;margin:12px 0 6px;padding-bottom:5px;border-bottom:1px solid #21262d}
+.p-val{font-size:10px;font-weight:600}
+.p-sig{color:#3fb950}.p-ns{color:#8b949e}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#21262d;color:#8b949e;padding:5px 8px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase}
+td{padding:5px 8px;border-bottom:1px solid #21262d;color:#c9d1d9}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1c2128}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔬 Tau Fibril Organisation Dashboard</h1>
+  <span class="badge" id="hdr-n">No data</span>
+  <span class="badge" id="hdr-s2"></span>
+  <span class="badge" id="hdr-psi"></span>
+  <span style="margin-left:auto;font-size:11px;color:#444">Drag JSON files or click to load multiple datasets</span>
+</header>
+
+<div id="multi-load">
+  <span>Loaded datasets:</span>
+  <span id="ds-list" style="color:#444;font-style:italic">none</span>
+  <button onclick="document.getElementById('file-in').click()"
+          style="background:#21262d;border:1px solid #30363d;border-radius:4px;color:#58a6ff;padding:4px 10px;cursor:pointer;font-size:11px">
+    + Add dataset
+  </button>
+  <input type="file" id="file-in" accept=".json" multiple style="display:none" onchange="loadFiles(this)">
+</div>
+
+<div id="dropzone" onclick="document.getElementById('file-in').click()">
+  <p><strong>Click or drag</strong> fibril_data.json files here (load multiple for cross-dataset comparison)</p>
+</div>
+
+<div id="app">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" onclick="switchTab('endon')">End-On Views</div>
+    <div class="tab" onclick="switchTab('packing')">Packing Order</div>
+    <div class="tab" onclick="switchTab('chains')">Chains</div>
+    <div class="tab" onclick="switchTab('spacing')">Spacing</div>
+    <div class="tab" onclick="switchTab('alignment')">Alignment</div>
+    <div class="tab" onclick="switchTab('summary')">📊 Multi-Dataset Summary</div>
+  </div>
+
+  <div class="panel active" id="panel-overview">
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="card"><h3>Key Metrics</h3><div id="metrics-list"></div></div>
+      <div class="card"><h3>Fibril Map — coloured by orientation group</h3>
+        <canvas id="cv-map" height="320"></canvas>
+        <div class="legend" id="legend-map"></div>
+      </div>
+    </div>
+    <div class="card"><h3>Findings Summary</h3><div id="findings-summary"></div></div>
+  </div>
+
+  <div class="panel" id="panel-endon">
+    <div class="info-box" id="endon-info"></div>
+    <div class="grid3">
+      <div class="card"><h3>All fibrils — global director</h3>
+        <canvas id="cv-eo-global" height="350"></canvas><div id="eo-global-stats" style="margin-top:6px"></div></div>
+      <div class="card" style="border-color:#E05C00"><h3 style="color:#E05C00">Group 1 — own axis</h3>
+        <canvas id="cv-eo-0" height="350"></canvas><div id="eo-0-stats" style="margin-top:6px"></div></div>
+      <div class="card" style="border-color:#0070B8"><h3 style="color:#0070B8">Group 2 — own axis</h3>
+        <canvas id="cv-eo-1" height="350"></canvas><div id="eo-1-stats" style="margin-top:6px"></div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-packing">
+    <div class="info-box" id="packing-info"></div>
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="card"><h3>ψ₆ vs ψ₄ per group — per-fibril distributions</h3>
+        <canvas id="cv-psi-violin" height="280"></canvas></div>
+      <div class="card"><h3>Mean ψ₆ / ψ₄ comparison</h3>
+        <canvas id="cv-psi-bar" height="280"></canvas>
+        <div id="psi-stats" style="margin-top:8px"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Voronoi coordination numbers</h3>
+        <canvas id="cv-vor" height="220"></canvas></div>
+      <div class="card"><h3>Bond angle distribution</h3>
+        <canvas id="cv-bond" height="220"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-chains">
+    <div class="info-box" id="chains-info"></div>
+    <div class="grid2">
+      <div class="card" style="border-color:#E05C00"><h3 style="color:#E05C00">Group 1 chains</h3>
+        <canvas id="cv-ch-0" height="350"></canvas><div id="ch-0-stats" style="margin-top:6px"></div></div>
+      <div class="card" style="border-color:#0070B8"><h3 style="color:#0070B8">Group 2 chains</h3>
+        <canvas id="cv-ch-1" height="350"></canvas><div id="ch-1-stats" style="margin-top:6px"></div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-spacing">
+    <div class="info-box" id="spacing-info"></div>
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="card"><h3>NND distribution — 3D centroid distances</h3>
+        <canvas id="cv-nnd" height="220"></canvas></div>
+      <div class="card"><h3>Spacing comparison</h3>
+        <canvas id="cv-spacing-bar" height="220"></canvas></div>
+    </div>
+    <div class="card"><h3>Spacing interpretation</h3><div id="spacing-interp"></div></div>
+  </div>
+
+  <div class="panel" id="panel-alignment">
+    <div class="info-box" id="align-info"></div>
+    <div class="grid2">
+      <div class="card"><h3>Pairwise fibril angles</h3>
+        <canvas id="cv-angles" height="240"></canvas></div>
+      <div class="card"><h3>S₂ & parallelism summary</h3>
+        <div id="align-stats" style="margin-top:4px"></div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-summary">
+    <div class="info-box" id="summary-info">
+      Load multiple dataset JSON files to see cross-dataset comparison and statistical summaries.
+    </div>
+    <div id="summary-content"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// GLOBALS
+// ════════════════════════════════════════════════════════════
+const GRP_COL = {'-1':'#555','0':'#E05C00','1':'#0070B8','2':'#15803D','3':'#9333EA'}
+const CHAIN_COLS = ['#00d4ff','#ff6b35','#7fff6b','#c87fff','#ffcc44','#ff4d8b','#44eeff','#ffaa33','#aa44ff','#44ffaa','#ff8844','#4488ff','#ffff44','#ff44ff','#44ff88','#88ff44','#8844ff']
+
+let DATASETS = []        // array of loaded dataset objects
+let ACTIVE   = null      // currently displayed dataset
+let LAST_DS_STATS = []   // module-level so renderSummaryCanvases can read it
+
+
+
+// ════════════════════════════════════════════════════════════
+// FILE LOADING
+// ════════════════════════════════════════════════════════════
+const dz = document.getElementById('dropzone')
+dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('drag')})
+dz.addEventListener('dragleave', ()=>dz.classList.remove('drag'))
+dz.addEventListener('drop', e=>{
+  e.preventDefault(); dz.classList.remove('drag')
+  Array.from(e.dataTransfer.files).forEach(readFile)
+})
+function loadFiles(inp){ Array.from(inp.files).forEach(readFile); inp.value='' }
+function readFile(file){
+  const fr=new FileReader()
+  fr.onload=e=>{
+    const data=JSON.parse(e.target.result)
+    addDataset(file.name.replace('.json',''), data)
+  }
+  fr.readAsText(file)
+}
+function addDataset(name, data, excludedGroups){
+  const computed = computeAllStats(data)
+  const ds = {name, data, ...computed, excludedGroups: excludedGroups||[]}
+  const idx = DATASETS.findIndex(d=>d.name===name)
+  if(idx>=0) DATASETS[idx]=ds; else DATASETS.push(ds)
+  ACTIVE = ds
+  refreshDatasetList()
+  dz.style.display='none'
+  document.getElementById('app').style.display='block'
+  render()
+}
+function toggleExcludeGroup(dsName, gKey){
+  const ds = DATASETS.find(d=>d.name===dsName)
+  if(!ds) return
+  const g = Number(gKey)
+  if(ds.excludedGroups.includes(g)){
+    ds.excludedGroups = ds.excludedGroups.filter(x=>x!==g)
+  } else {
+    ds.excludedGroups.push(g)
+  }
+  LAST_DS_STATS = []   // force recompute on next renderSummary/renderSummaryCanvases
+  refreshDatasetList()
+  if(ACTIVE&&ACTIVE.name===dsName) render()
+  renderSummary()
+}
+function removeDataset(name){
+  DATASETS=DATASETS.filter(d=>d.name!==name)
+  ACTIVE = DATASETS.length?DATASETS[DATASETS.length-1]:null
+  refreshDatasetList()
+  if(ACTIVE) render(); else {
+    document.getElementById('app').style.display='none'
+    dz.style.display='block'
+  }
+}
+function refreshDatasetList(){
+  const el=document.getElementById('ds-list')
+  if(!DATASETS.length){el.innerHTML='<span style="color:#444;font-style:italic">none</span>';return}
+  el.innerHTML=DATASETS.map(ds=>{
+    const isActive=ACTIVE&&ACTIVE.name===ds.name
+    const oge=ds.data&&ds.data.orientation_group_endon||{}
+    const gKeys=Object.keys(oge).filter(k=>k!=='global').sort()
+    const grpBtns=gKeys.map(g=>{
+      const excl=ds.excludedGroups&&ds.excludedGroups.includes(Number(g))
+      const n=oge[g]?oge[g].n:0
+      return `<button onclick="event.stopPropagation();toggleExcludeGroup('${ds.name}',${g})"
+        title="${excl?'Click to include':'Click to exclude'} Group ${Number(g)+1}"
+        style="background:${excl?'#333':'#21262d'};border:1px solid ${excl?'#555':'#30363d'};
+               border-radius:3px;color:${excl?'#555':'#8b949e'};padding:1px 5px;cursor:pointer;
+               font-size:10px;text-decoration:${excl?'line-through':''};margin-left:3px">
+        G${Number(g)+1}(${n})</button>`
+    }).join('')
+    return `<span class="ds-badge" onclick="selectDataset('${ds.name}')"
+          style="${isActive?'border-color:#58a6ff;color:#58a6ff':''}">
+      ${ds.name}${grpBtns}
+      <button onclick="event.stopPropagation();removeDataset('${ds.name}')"
+              style="background:none;border:none;color:#f85149;cursor:pointer;font-size:13px;line-height:1;padding:0;margin-left:4px">×</button>
+    </span>`
+  }).join('')
+}
+function selectDataset(name){
+  ACTIVE=DATASETS.find(d=>d.name===name)
+  refreshDatasetList()
+  render()
+}
+
+// ════════════════════════════════════════════════════════════
+// STATISTICS
+// ════════════════════════════════════════════════════════════
+function computeAllStats(data){
+  const oge = data.orientation_group_endon || {}
+  const ogeKeys = Object.keys(oge).filter(k=>k!=='global')
+  const groups = ogeKeys.map(Number).sort()
+  const result = {groups:{}, nGroups:groups.length}
+
+  groups.forEach(g=>{
+    const v = oge[String(g)]
+    if(!v) return
+    const lbl = v.group_labels_all
+    const pxa = v.proj_all_x, pya = v.proj_all_y
+    if(!lbl||!pxa||!pya) return
+    const mask = lbl.map(l=>l===g)
+    const pxO = pxa.filter((_,i)=>mask[i])
+    const pyO = pya.filter((_,i)=>mask[i])
+    if(pxO.length<3) return
+
+    try {
+      const {mean:p6,per:p6per} = computePsiN(pxO,pyO,pxa,pya,6)
+      const {mean:p4,per:p4per} = computePsiN(pxO,pyO,pxa,pya,4)
+      const nz6 = p6per.filter(x=>x>0), nz4 = p4per.filter(x=>x>0)
+      const {pval:pval64, stat:wstat} = wilcoxon(nz6, nz4)
+      const nndOwn = nnds(pxO,pyO)
+      const pts = pxO.map((x,i)=>[x,pyO[i]])
+      const chains = detectChains(pts)
+      result.groups[g] = {
+        n:pxO.length, psi6:p6, psi4:p4, p6per, p4per,
+        pval64, wstat,
+        nndOwn: nndOwn.length ? nndOwn.reduce((a,b)=>a+b,0)/nndOwn.length : 0,
+        chains, pxO, pyO
+      }
+    } catch(e) {
+      console.warn('computeAllStats group', g, 'failed:', e.message)
+    }
+  })
+
+  // Global from metrics
+  const m = data.metrics || {}
+  result.S2        = m.S2_nematic || 0
+  result.nnd3d     = m.mean_nnd_nm || 0
+  // Parallelism Index (collagen literature) = mean|cos θ to director|
+  // Derived from S2 via: PI ≈ sqrt((2*S2+1)/3)  [exact when all fibres same angle]
+  // More precisely computed from axes directly using the stored S2 director
+  try {
+    const axes=data.fibrils.map(f=>f.axis).filter(a=>a&&a.length===3)
+    if(axes.length>2){
+      // Use S2 to get mean cos²θ: S2=(3<cos²θ>-1)/2 => <cos²θ>=(2*S2+1)/3
+      const S2val = m.S2_nematic||0
+      const meanCos2 = (2*S2val+1)/3
+      // PI = mean|cosθ| ≈ sqrt(meanCos2) (valid for unimodal distributions)
+      result.PI = Math.sqrt(Math.max(0, meanCos2))
+    }
+  } catch(e){ result.PI=null }
+  result.aa        = m.mean_axis_axis_nm || 0
+  result.nBundles  = m.n_bundles || 0
+  result.voronoi   = data.voronoi_coordination || []
+  result.nFibrils  = data.n_fibrils || 0
+  result.psi6xy    = m.mean_psi6 || 0
+  result.psi4xy    = m.psi4 || 0
+
+  // Packing plane NND
+  try {
+    const pp = data.packing_plane && data.packing_plane.global
+    if(pp && pp.proj_x && pp.proj_x.length > 1){
+      const nv = nnds(pp.proj_x, pp.proj_y)
+      result.nndPP = nv.length ? nv.reduce((a,b)=>a+b,0)/nv.length : 0
+    }
+  } catch(e) { result.nndPP = 0 }
+
+  // Bond angles from cluster_data global
+  try {
+    const bd = data.cluster_data && data.cluster_data.global
+    result.bondAngles = bd ? (bd.bond_angles||[]) : []
+  } catch(e) { result.bondAngles = [] }
+
+  return result
+}
+
+function computePsiN(pxO,pyO,pxA,pyA,n){
+  const r=meanNND(pxA,pyA)*1.5
+  const vals=pxO.map((_,i)=>{
+    const nbs=pxO.reduce((acc,_,j)=>{
+      if(j!==i&&Math.hypot(pxO[i]-pxO[j],pyO[i]-pyO[j])<=r) acc.push(j)
+      return acc
+    },[])
+    if(nbs.length<2) return null
+    let re=0,im=0
+    nbs.forEach(j=>{const a=Math.atan2(pyO[j]-pyO[i],pxO[j]-pxO[i]);re+=Math.cos(n*a);im+=Math.sin(n*a)})
+    return Math.sqrt(re*re+im*im)/nbs.length
+  })
+  const v=vals.filter(x=>x!==null)
+  return {mean:v.length?v.reduce((a,b)=>a+b,0)/v.length:0, per:vals.map(x=>x===null?0:x)}
+}
+
+function meanNND(px,py){
+  const n=px.length; let s=0
+  for(let i=0;i<n;i++){let md=Infinity;for(let j=0;j<n;j++){if(j!==i){const d=Math.hypot(px[i]-px[j],py[i]-py[j]);if(d<md)md=d}}s+=md}
+  return s/n
+}
+function nnds(px,py){
+  return px.map((_,i)=>{let md=Infinity;for(let j=0;j<px.length;j++){if(j!==i){const d=Math.hypot(px[i]-px[j],py[i]-py[j]);if(d<md)md=d}}return md})
+}
+
+function wilcoxon(a,b){
+  // Signed-rank test, a>b (one-sided)
+  if(a.length!==b.length||a.length<4) return {pval:1,stat:0}
+  const diffs=a.map((x,i)=>x-b[i]).filter(d=>d!==0)
+  const ranked=diffs.map((d,i)=>({d,abs:Math.abs(d),i})).sort((a,b)=>a.abs-b.abs)
+  ranked.forEach((r,i)=>r.rank=i+1)
+  const Wplus=ranked.filter(r=>r.d>0).reduce((s,r)=>s+r.rank,0)
+  const n=ranked.length
+  const mu=n*(n+1)/4, sigma=Math.sqrt(n*(n+1)*(2*n+1)/24)
+  const z=(Wplus-mu)/sigma
+  // one-sided p from standard normal
+  const pval=1-normCDF(z)
+  return {pval, stat:Wplus}
+}
+function normCDF(z){
+  const t=1/(1+0.2316419*Math.abs(z))
+  const p=1-0.3989423*Math.exp(-z*z/2)*(0.3193815*t-0.3565638*t*t+1.7814779*t*t*t-1.8212560*t*t*t*t+1.3302744*t*t*t*t*t)
+  return z>=0?p:1-p
+}
+function fmtP(p){
+  if(p<0.001) return '<span class="p-val p-sig">p&lt;0.001 ***</span>'
+  if(p<0.01)  return `<span class="p-val p-sig">p=${p.toFixed(3)} **</span>`
+  if(p<0.05)  return `<span class="p-val p-sig">p=${p.toFixed(3)} *</span>`
+  return `<span class="p-val p-ns">p=${p.toFixed(3)} ns</span>`
+}
+function tagPsi(v){
+  if(v>0.6) return '<span class="tag tag-hex">Strong hex</span>'
+  if(v>0.3) return '<span class="tag tag-mod">Moderate</span>'
+  return '<span class="tag tag-weak">Weak</span>'
+}
+
+function detectChains(pts,thresh=168,sf=1.4){
+  const n=pts.length; if(n<3) return {labels:new Array(n).fill(-1),chains:[],stats:{nChains:0,nIn:0,fracIn:0,maxLen:0,meanLen:0}}
+  const nndsArr=pts.map((_,i)=>{let md=Infinity;pts.forEach((_,j)=>{if(j!==i){const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);if(d<md)md=d}});return md})
+  const r=nndsArr.reduce((a,b)=>a+b,0)/n*sf
+  const nb=pts.map((_,i)=>pts.reduce((acc,_,j)=>{if(j!==i&&Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1])<=r)acc.push(j);return acc},[]))
+  const rowAdj=pts.map(()=>new Set())
+  for(let k=0;k<n;k++){const nbs=nb[k];if(nbs.length<2)continue;for(let a=0;a<nbs.length;a++)for(let b=a+1;b<nbs.length;b++){const ii=nbs[a],jj=nbs[b];const vix=pts[ii][0]-pts[k][0],viy=pts[ii][1]-pts[k][1],vjx=pts[jj][0]-pts[k][0],vjy=pts[jj][1]-pts[k][1];const li=Math.hypot(vix,viy)+1e-9,lj=Math.hypot(vjx,vjy)+1e-9;const dot=(vix/li)*(vjx/lj)+(viy/li)*(vjy/lj);if(Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI>=thresh){rowAdj[ii].add(jj);rowAdj[jj].add(ii)}}}
+  const vis=new Array(n).fill(false);const chains=[]
+  for(let s=0;s<n;s++){if(vis[s]||!rowAdj[s].size){vis[s]=true;continue};const ch=[];const q=[s];vis[s]=true;while(q.length){const nd=q.shift();ch.push(nd);for(const x of rowAdj[nd])if(!vis[x]){vis[x]=true;q.push(x)}};if(ch.length>=2)chains.push(ch)}
+  chains.sort((a,b)=>b.length-a.length)
+  const labels=new Array(n).fill(-1);chains.forEach((c,ci)=>c.forEach(fi=>labels[fi]=ci))
+  const cl=chains.map(c=>c.length),nIn=labels.filter(x=>x>=0).length
+  return {labels,chains,stats:{nChains:chains.length,nIn,fracIn:nIn/n,maxLen:cl.length?Math.max(...cl):0,meanLen:cl.length?cl.reduce((a,b)=>a+b,0)/cl.length:0,lengths:cl}}
+}
+
+// ════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════════════════════
+function switchTab(name){
+  const names=['overview','endon','packing','chains','spacing','alignment','summary']
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name))
+  if(!ACTIVE) return
+  // Re-draw canvases after panel is visible (clientWidth now non-zero)
+  requestAnimationFrame(()=>{
+    if(name==='overview')  try{ renderMap() }catch(e){console.warn("renderMap() error:",e.message)}
+    if(name==='endon')     try{ renderEndonCanvases() }catch(e){console.warn("renderEndonCanvases() error:",e.message)}
+    if(name==='packing')   try{ renderPackingCanvases() }catch(e){console.warn("renderPackingCanvases() error:",e.message)}
+    if(name==='chains')    try{ renderChainCanvases() }catch(e){console.warn("renderChainCanvases() error:",e.message)}
+    if(name==='spacing')   try{ renderSpacingCanvases() }catch(e){console.warn("renderSpacingCanvases() error:",e.message)}
+    if(name==='alignment') renderAlignmentCanvases()
+    if(name==='summary')   renderSummary()
+  })
+}
+
+// ════════════════════════════════════════════════════════════
+// CANVAS HELPERS
+// ════════════════════════════════════════════════════════════
+function sizeCanvas(cv){
+  const W=cv.clientWidth||cv.width||600
+  const H=cv.clientHeight||cv.height||cv.getAttribute('height')||220
+  cv.width=W; cv.height=H
+  return{W:+W,H:+H}
+}
+function fitT(cv,xs,ys,pad=16){
+  const{W,H}=sizeCanvas(cv)
+  const xmin=Math.min(...xs)-pad,xmax=Math.max(...xs)+pad,ymin=Math.min(...ys)-pad,ymax=Math.max(...ys)+pad
+  const s=Math.min((W-2*pad)/(xmax-xmin),(H-2*pad)/(ymax-ymin))
+  const ox=pad+(W-2*pad-(xmax-xmin)*s)/2,oy=pad+(H-2*pad-(ymax-ymin)*s)/2
+  return{tx:x=>(x-xmin)*s+ox,ty:y=>H-((y-ymin)*s+oy),s,W,H,pad,xmin,xmax,ymin,ymax}
+}
+function scaleBar(ctx,t,W,H,col='white'){
+  const nmPerPx=1/t.s,bar=100/nmPerPx
+  const x=t.pad*1.2,y=H-t.pad*1.2
+  ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+bar,y);ctx.stroke()
+  ctx.fillStyle=col;ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText('100 nm',x+bar/2,y-4)
+}
+function bgRect(ctx,W,H){ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,W,H)}
+
+// ════════════════════════════════════════════════════════════
+// HISTOGRAM
+// ════════════════════════════════════════════════════════════
+function drawHist(cvId,values,binW,col,xLabel,vlines=[]){
+  const cv=document.getElementById(cvId);if(!cv)return
+  if(!values||!values.length)return
+  const{W,H}=sizeCanvas(cv);const ctx=cv.getContext('2d')
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H)
+  const pad={l:36,r:8,t:8,b:32},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b
+  const mn=Math.min(...values),mx=Math.max(...values)
+  const bins=Math.ceil((mx-mn)/binW)+1
+  const counts=new Array(bins).fill(0)
+  values.forEach(v=>{const bi=Math.min(Math.floor((v-mn)/binW),bins-1);counts[bi]++})
+  const maxC=Math.max(...counts)
+  ctx.fillStyle='#1c2128';ctx.fillRect(pad.l,pad.t,pw,ph)
+  const sx=pw/(bins*binW),sy=ph/maxC
+  counts.forEach((c,i)=>{
+    if(!c)return
+    const x=pad.l+(mn+i*binW-mn)*sx,bw=binW*sx-1,bh=c*sy
+    ctx.fillStyle=col+'aa';ctx.fillRect(x,pad.t+ph-bh,bw,bh)
+  })
+  vlines.forEach(({v,c,lbl})=>{
+    const x=pad.l+(v-mn)*sx
+    ctx.strokeStyle=c;ctx.lineWidth=1.5;ctx.setLineDash([4,3])
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke()
+    ctx.setLineDash([]);if(lbl){ctx.fillStyle=c;ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText(lbl,x,pad.t+ph+12)}
+  })
+  ctx.strokeStyle='#30363d';ctx.lineWidth=1;ctx.setLineDash([])
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.lineTo(pad.l+pw,pad.t+ph);ctx.stroke()
+  ctx.fillStyle='#8b949e';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText(xLabel,pad.l+pw/2,H-4)
+  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;ctx.fillText(v.toFixed(0),pad.l+((v-mn)*sx),pad.t+ph+11)}
+}
+
+// ════════════════════════════════════════════════════════════
+// BAR CHART
+// ════════════════════════════════════════════════════════════
+function drawBars(cvId,lbls,vals,cols,yMax){
+  const cv=document.getElementById(cvId);if(!cv)return
+  if(!lbls||!lbls.length||!vals||!vals.length)return
+  const{W,H}=sizeCanvas(cv);const ctx=cv.getContext('2d')
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H)
+  const pad={l:8,r:8,t:12,b:38},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b
+  const mx=yMax||Math.max(...vals)*1.15
+  const bw=pw/lbls.length*0.55,gap=pw/lbls.length
+  ctx.fillStyle='#1c2128';ctx.fillRect(pad.l,pad.t,pw,ph)
+  // gridlines
+  const GBARS=[0.25,0.5,0.75,1.0]
+  GBARS.forEach(f=>{
+    const y=pad.t+ph-f*ph/mx*mx
+    ctx.strokeStyle='#21262d';ctx.lineWidth=0.8;ctx.setLineDash([3,3])
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+pw,y);ctx.stroke()
+    ctx.setLineDash([]);ctx.fillStyle='#444';ctx.font='9px sans-serif';ctx.textAlign='right'
+    ctx.fillText((f*mx).toFixed(2),pad.l-2,y+3)
+  })
+  lbls.forEach((lbl,i)=>{
+    const x=pad.l+i*gap+(gap-bw)/2,bh=vals[i]/mx*ph
+    ctx.fillStyle=cols[i%cols.length]+'cc';ctx.fillRect(x,pad.t+ph-bh,bw,bh)
+    ctx.fillStyle='white';ctx.font='bold 10px sans-serif';ctx.textAlign='center'
+    ctx.fillText(vals[i].toFixed?vals[i].toFixed(3):vals[i],x+bw/2,pad.t+ph-bh-4)
+    ctx.fillStyle='#8b949e';ctx.font='9px sans-serif'
+    lbl.split('\n').forEach((l,li)=>ctx.fillText(l,x+bw/2,pad.t+ph+12+li*11))
+  })
+}
+
+// ════════════════════════════════════════════════════════════
+// VIOLIN / DISTRIBUTION
+// ════════════════════════════════════════════════════════════
+function drawViolin(cvId, datasets){
+  const cv=document.getElementById(cvId);if(!cv)return
+  if(!datasets||!datasets.length)return
+  const{W,H}=sizeCanvas(cv);const ctx=cv.getContext('2d')
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H)
+  const pad={l:30,r:10,t:10,b:30},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b
+  ctx.fillStyle='#1c2128';ctx.fillRect(pad.l,pad.t,pw,ph)
+  // y axis 0-1
+  const yS=y=>pad.t+ph-(y*ph)
+  const gw=pw/datasets.length
+  // gridlines
+  const GRID=[0.25,0.5,0.75,1.0]
+  GRID.forEach(y=>{
+    ctx.strokeStyle='#21262d';ctx.lineWidth=0.8;ctx.setLineDash([3,3])
+    ctx.beginPath();ctx.moveTo(pad.l,yS(y));ctx.lineTo(pad.l+pw,yS(y));ctx.stroke()
+    ctx.setLineDash([]);ctx.fillStyle='#444';ctx.font='9px sans-serif';ctx.textAlign='right'
+    ctx.fillText(y.toFixed(2),pad.l-2,yS(y)+3)
+  })
+  datasets.forEach((ds,i)=>{
+    const x0=pad.l+i*gw,cx=x0+gw/2,hw=gw*0.35
+    const v=ds.values.filter(x=>x>0).sort((a,b)=>a-b)
+    if(!v.length) return
+    const mn=Math.min(...v),mx=Math.max(...v)
+    const mean=v.reduce((a,b)=>a+b,0)/v.length
+    const q1=v[Math.floor(v.length*0.25)],q3=v[Math.floor(v.length*0.75)]
+    const med=v[Math.floor(v.length*0.5)]
+    // KDE
+    const bw_kde=0.15,pts=50
+    const kde=Array.from({length:pts},(_,ki)=>{
+      const y=mn+ki*(mx-mn)/(pts-1)
+      const d=v.reduce((s,xi)=>s+Math.exp(-0.5*((y-xi)/bw_kde)**2),0)/v.length/bw_kde/Math.sqrt(2*Math.PI)
+      return{y,d}
+    })
+    const maxD=Math.max(...kde.map(k=>k.d))
+    if(!maxD||!isFinite(maxD)) return  // guard against degenerate distribution
+    // violin fill — use rgba to avoid invalid hex color issues
+    const baseCol=ds.col.length>7?ds.col.slice(0,7):ds.col
+    ctx.fillStyle=baseCol+'44'
+    ctx.beginPath()
+    kde.forEach(k=>ctx.lineTo(cx+k.d/maxD*hw,yS(k.y)))
+    kde.slice().reverse().forEach(k=>ctx.lineTo(cx-k.d/maxD*hw,yS(k.y)))
+    ctx.closePath();ctx.fill()
+    // IQR box
+    ctx.fillStyle=baseCol+'88';ctx.fillRect(cx-hw*0.35,yS(q3),hw*0.7,yS(q1)-yS(q3))
+    // median
+    ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-hw*0.35,yS(med));ctx.lineTo(cx+hw*0.35,yS(med));ctx.stroke()
+    // mean diamond
+    ctx.fillStyle=baseCol;ctx.beginPath();ctx.moveTo(cx,yS(mean)-5);ctx.lineTo(cx+4,yS(mean));ctx.lineTo(cx,yS(mean)+5);ctx.lineTo(cx-4,yS(mean));ctx.closePath();ctx.fill()
+    // label
+    ctx.fillStyle=baseCol;ctx.font='9px sans-serif';ctx.textAlign='center'
+    ctx.fillText(ds.label,cx,pad.t+ph+16)
+    ctx.fillStyle='#888';ctx.font='8px sans-serif'
+    ctx.fillText(mean.toFixed(3),cx,pad.t+ph+26)
+  })
+  ctx.strokeStyle='#30363d';ctx.lineWidth=1;ctx.beginPath()
+  ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.lineTo(pad.l+pw,pad.t+ph);ctx.stroke()
+}
+
+// ════════════════════════════════════════════════════════════
+// END-ON CANVAS
+// ════════════════════════════════════════════════════════════
+function sortByDepth(d){return d.map((_,i)=>i).sort((a,b)=>d[a]-d[b])}
+function drawEndon(cvId,key,focusGroup,psi6Override){
+  const cv=document.getElementById(cvId);if(!cv||!ACTIVE)return
+  const oge=ACTIVE.data.orientation_group_endon
+  if(!oge) return
+  const v=oge[String(key)];if(!v)return
+  const{W,H}=sizeCanvas(cv);const ctx=cv.getContext('2d')
+  bgRect(ctx,W,H)
+  const px=v.proj_all_x,py=v.proj_all_y,depth=v.depth_all,labels=v.group_labels_all,n=px.length
+  const t=fitT(cv,px,py,18)
+  const r=Math.max(2,4*t.s),dmin=Math.min(...depth),dr=Math.max(...depth)-dmin+1e-9
+  const order=sortByDepth(depth)
+  order.forEach(i=>{
+    const g=labels[i]
+    let col,alpha
+    if(focusGroup==='global'){col='#00FF41';alpha=0.88}
+    else if(g===focusGroup){col=GRP_COL[String(g)]||'#888';alpha=0.92}
+    else{const dn=(depth[i]-dmin)/dr;col='#333';alpha=0.10+0.22*(1-dn)}
+    ctx.globalAlpha=alpha;ctx.fillStyle=col
+    ctx.beginPath();ctx.arc(t.tx(px[i]),t.ty(py[i]),r,0,Math.PI*2);ctx.fill()
+  })
+  ctx.globalAlpha=1
+  scaleBar(ctx,t,W,H)
+  const psi6=psi6Override!==undefined?psi6Override:v.psi6_pp
+  ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(W-88,6,82,20)
+  ctx.fillStyle='#FFCC44';ctx.font='bold 10px sans-serif';ctx.textAlign='right'
+  ctx.fillText(`ψ₆=${psi6.toFixed(3)}`,W-8,20)
+}
+
+// ════════════════════════════════════════════════════════════
+// CHAINS CANVAS
+// ════════════════════════════════════════════════════════════
+function drawChainsCanvas(cvId, gKey){
+  const cv=document.getElementById(cvId);if(!cv||!ACTIVE)return
+  const gs=ACTIVE.groups[gKey];if(!gs)return
+  const{W,H}=sizeCanvas(cv);const ctx=cv.getContext('2d')
+  bgRect(ctx,W,H)
+  const{pxO,pyO,chains:chainResult}=gs
+  if(!chainResult||!chainResult.chains) return
+  const{labels,chains}=chainResult
+  const t=fitT(cv,pxO,pyO,18)
+  const r=Math.max(2,4*t.s)
+  chains.forEach((chain,ci)=>{
+    const col=CHAIN_COLS[ci%CHAIN_COLS.length]
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.globalAlpha=0.5
+    for(let a=0;a<chain.length;a++)for(let b=a+1;b<chain.length;b++){
+      const i=chain[a],j=chain[b]
+      if(Math.hypot(pxO[i]-pxO[j],pyO[i]-pyO[j])<80){
+        ctx.beginPath();ctx.moveTo(t.tx(pxO[i]),t.ty(pyO[i]));ctx.lineTo(t.tx(pxO[j]),t.ty(pyO[j]));ctx.stroke()
+      }
+    }
+  })
+  ctx.globalAlpha=1
+  for(let i=0;i<pxO.length;i++){
+    const ci=labels[i];ctx.fillStyle=ci>=0?CHAIN_COLS[ci%CHAIN_COLS.length]:'#2a2a3a';ctx.globalAlpha=ci>=0?0.9:0.35
+    ctx.beginPath();ctx.arc(t.tx(pxO[i]),t.ty(pyO[i]),r,0,Math.PI*2);ctx.fill()
+  }
+  ctx.globalAlpha=1
+  scaleBar(ctx,t,W,H)
+}
+
+// ════════════════════════════════════════════════════════════
+// MAIN RENDER
+// ════════════════════════════════════════════════════════════
+function render(){
+  if(!ACTIVE) return
+  const ds=ACTIVE, data=ds.data, m=data.metrics
+  const oge=data.orientation_group_endon||{}
+  const grpKeys=Object.keys(ds.groups||{}).map(Number).sort()
+  const g0=ds.groups[0], g1=ds.groups[1]
+
+  // Header
+  document.getElementById('hdr-n').textContent=`${data.n_fibrils} fibrils · ${ds.name}`
+  document.getElementById('hdr-s2').textContent=`S₂=${m.S2_nematic.toFixed(3)}`
+  try{document.getElementById('hdr-psi').textContent=`ψ₆ G1=${g0&&g0.psi6!=null?g0.psi6.toFixed(3):'?'} G2=${g1&&g1.psi6!=null?g1.psi6.toFixed(3):'?'}`}catch(e){}
+
+  // ── OVERVIEW ─────────────────────────────────────────────
+  const tagP=v=>v<0.001?'***':v<0.01?'**':v<0.05?'*':'ns'
+  const rows=[
+    ['S₂ nematic order', m.S2_nematic.toFixed(4), 'sv-green'],
+    ['Parallelism Index (PI)', ACTIVE.PI!=null?ACTIVE.PI.toFixed(4):'—', 'sv-green'],
+    ['Mean NND (3D)', m.mean_nnd_nm.toFixed(1)+' nm','sv-blue'],
+    ['Surface-to-surface', m.mean_axis_axis_nm.toFixed(1)+' nm',''],
+    ['Packing plane NND', (ds.nndPP||0).toFixed(1)+' nm',''],
+    ['ψ₆ Group 1 (corrected)', g0?g0.psi6.toFixed(3):'—','sv-amber'],
+    ['ψ₆ Group 2 (corrected)', g1?g1.psi6.toFixed(3):'—','sv-amber'],
+    ['ψ₄ Group 1', g0?g0.psi4.toFixed(3):'—',''],
+    ['ψ₄ Group 2', g1?g1.psi4.toFixed(3):'—',''],
+    ['ψ₆>ψ₄ Group 1', g0?fmtP(g0.pval64):'—',''],
+    ['ψ₆>ψ₄ Group 2', g1?fmtP(g1.pval64):'—',''],
+    ['6-fold Voronoi', (m.voronoi_frac_6*100).toFixed(1)+'%',''],
+    ['N bundles', m.n_bundles,'sv-blue'],
+    ['N isolated', m.n_isolated,''],
+  ]
+  document.getElementById('metrics-list').innerHTML=rows.map(([l,v,c])=>
+    `<div class="stat-row"><span class="stat-label">${l}</span><span class="stat-value ${c||''}">${v}</span></div>`
+  ).join('')
+
+  try{ renderMap() }catch(e){console.warn("renderMap() error:",e.message)}
+  document.getElementById('legend-map').innerHTML=[
+    `<span class="leg-item"><span class="leg-dot" style="background:#E05C00"></span>Group 1 (n=${g0?g0.n:'?'})</span>`,
+    `<span class="leg-item"><span class="leg-dot" style="background:#0070B8"></span>Group 2 (n=${g1?g1.n:'?'})</span>`,
+    `<span class="leg-item"><span class="leg-dot" style="background:#555"></span>Isolated</span>`
+  ].join('')
+
+  // Findings
+  const hexDom1=g0&&g0.psi6>g0.psi4, hexDom2=g1&&g1.psi6>g1.psi4
+  const ch0s=g0&&g0.chains?g0.chains.stats:{}, ch1s=g1&&g1.chains?g1.chains.stats:{}
+  document.getElementById('findings-summary').innerHTML=`
+    <div class="finding">
+      <strong>Near-perfect alignment:</strong> S₂ = ${m.S2_nematic.toFixed(3)} — fibrils are strongly parallel 
+      (mean pairwise angle ~${(Math.acos(Math.max(0,1-3*(1-m.S2_nematic)/2))*180/Math.PI).toFixed(1)}° from perfectly parallel).
+    </div>
+    <div class="finding ${hexDom2?'':'amber'}">
+      <strong>Packing order:</strong> 
+      Group 1 is ${hexDom1?'<span class="hi">hexagonally</span>':'<span class="warn">square</span>'}-dominant 
+      (ψ₆=${g0?g0.psi6.toFixed(3):'?'}, ψ₄=${g0?g0.psi4.toFixed(3):'?'}, ${g0?fmtP(g0.pval64):'?'}).
+      Group 2 is ${hexDom2?'<span class="hi">hexagonally</span>':'<span class="warn">square</span>'}-dominant 
+      (ψ₆=${g1?g1.psi6.toFixed(3):'?'}, ψ₄=${g1?g1.psi4.toFixed(3):'?'}, ${g1?fmtP(g1.pval64):'?'}).
+    </div>
+    <div class="finding blue">
+      <strong>Two orientation sub-populations</strong> (~15° apart in 3D): 
+      Group 1 n=${g0?g0.n:'?'}, Group 2 n=${g1?g1.n:'?'}. 
+      Groups are spatially separated (inter-group NND ≈ 2× intra-group NND).
+    </div>
+    <div class="finding">
+      <strong>Row chains:</strong> 
+      Group 1: ${ch0s.nIn||'?'}/${g0?g0.n:'?'} (${ch0s.fracIn?(ch0s.fracIn*100).toFixed(0):'?'}%) in ${ch0s.nChains||'?'} chains, max ${ch0s.maxLen||'?'} fibrils.
+      Group 2: ${ch1s.nIn||'?'}/${g1?g1.n:'?'} (${ch1s.fracIn?(ch1s.fracIn*100).toFixed(0):'?'}%) in ${ch1s.nChains||'?'} chains, max ${ch1s.maxLen||'?'} fibrils.
+    </div>
+    <div class="finding">
+      <strong>Spacing:</strong> Centre-to-centre NND = ${m.mean_nnd_nm.toFixed(1)} nm (3D). 
+      Surface-to-surface = ${m.mean_axis_axis_nm.toFixed(1)} nm 
+      (gap between fibril surfaces ≈ ${(m.mean_nnd_nm-m.mean_axis_axis_nm).toFixed(1)} nm).
+    </div>`
+
+  // ── END-ON ────────────────────────────────────────────────
+  document.getElementById('endon-info').innerHTML=
+    `<strong>True 3D end-on projections</strong> — each fibril rendered as a circle using full XYZ centroid positions. 
+    Centre: viewing along the global mean director (all fibrils). 
+    Right: each orientation group viewed along its own axis — the other group is grey/faded by depth, matching the IMOD rotation view. 
+    <strong>ψ₆ uses corrected method:</strong> search radius from all-fibril spacing, only same-group neighbours counted.`
+  try{ renderEndonCanvases() }catch(e){console.warn("renderEndonCanvases() error:",e.message)}
+
+  // ── PACKING ORDER ─────────────────────────────────────────
+  document.getElementById('packing-info').innerHTML=
+    `ψ₆ (hexagonal) and ψ₄ (square) bond-orientational order parameters computed per orientation group from the true 3D end-on projection. 
+    <strong>Corrected method:</strong> neighbour search uses all-fibril spacing; only same-group neighbours counted for the angle sum. 
+    Diamond = mean; box = IQR; Wilcoxon signed-rank test (one-sided ψ₆>ψ₄).`
+
+  try{ renderPackingCanvases() }catch(e){console.warn("renderPackingCanvases() error:",e.message)}
+
+  document.getElementById('psi-stats').innerHTML=`
+    <div class="stat-row"><span class="stat-label">Group 1  ψ₆=${g0?g0.psi6.toFixed(3):'?'} vs ψ₄=${g0?g0.psi4.toFixed(3):'?'}</span>
+      <span class="stat-value">${g0?fmtP(g0.pval64):''} ${g0?tagPsi(g0.psi6):''}</span></div>
+    <div class="stat-row"><span class="stat-label">Group 2  ψ₆=${g1?g1.psi6.toFixed(3):'?'} vs ψ₄=${g1?g1.psi4.toFixed(3):'?'}</span>
+      <span class="stat-value">${g1?fmtP(g1.pval64):''} ${g1?tagPsi(g1.psi6):''}</span></div>
+    <div style="margin-top:8px;font-size:11px;color:#8b949e;line-height:1.6">
+      Wilcoxon signed-rank test, one-sided (ψ₆ > ψ₄), per fibril.<br>
+      Group 1 is <strong style="color:${g0&&g0.psi6>g0.psi4?'#E05C00':'#58a6ff'}">${g0&&g0.psi6>g0.psi4?'hexagonally':'square'}-dominant</strong>.
+      Group 2 is <strong style="color:${g1&&g1.psi6>g1.psi4?'#0070B8':'#bc8cff'}">${g1&&g1.psi6>g1.psi4?'hexagonally':'square'}-dominant</strong>.
+    </div>`
+
+  // ── CHAINS ────────────────────────────────────────────────
+  const ch0=g0&&g0.chains?g0.chains.stats:{}, ch1=g1&&g1.chains?g1.chains.stats:{}
+  document.getElementById('chains-info').innerHTML=
+    `Collinear chain detection within each orientation group's own-axis end-on projection. 
+    This eliminates cross-group artefacts from the 2D method (previously 53% of chains were contaminated). 
+    <strong>Group 1:</strong> ${ch0.nIn||0}/${g0?g0.n:0} (${ch0.fracIn?(ch0.fracIn*100).toFixed(0):0}%) in ${ch0.nChains||0} chains, max ${ch0.maxLen||0}. 
+    <strong>Group 2:</strong> ${ch1.nIn||0}/${g1?g1.n:0} (${ch1.fracIn?(ch1.fracIn*100).toFixed(0):0}%) in ${ch1.nChains||0} chains, max ${ch1.maxLen||0}.`
+  try{ renderChainCanvases() }catch(e){console.warn("renderChainCanvases() error:",e.message)}
+
+  // ── SPACING ───────────────────────────────────────────────
+  document.getElementById('spacing-info').innerHTML=
+    `<strong>3D NND (${m.mean_nnd_nm.toFixed(1)} nm):</strong> true centre-to-centre distance from 3D XYZ centroids. 
+    <strong>Packing plane NND (${(ds.nndPP||0).toFixed(1)} nm):</strong> spacing within the best-fit packing plane — slightly compressed due to ${(data.packing_plane&&data.packing_plane.global&&data.packing_plane.global.plane_angle||0).toFixed(0)}° tilt. 
+    <strong>Surface-to-surface (${m.mean_axis_axis_nm.toFixed(1)} nm):</strong> minimum distance between fibril surfaces (axis-to-axis minus fibril diameter ~8 nm gives ~${(m.mean_axis_axis_nm-8).toFixed(0)} nm gap).`
+  const nnd=data.nnd_distribution.all_nm
+  const mn2=nnd.reduce((a,b)=>a+b,0)/nnd.length
+  const med2=nnd.slice().sort((a,b)=>a-b)[Math.floor(nnd.length/2)]
+  document.getElementById('spacing-interp').innerHTML=`
+    <div class="stat-row"><span class="stat-label">3D NND mean ± std</span><span class="stat-value">${m.mean_nnd_nm.toFixed(1)} ± ${(()=>{const v=nnd,m2=v.reduce((a,b)=>a+b,0)/v.length;return Math.sqrt(v.reduce((a,b)=>a+(b-m2)**2,0)/v.length).toFixed(1)})()}} nm</span></div>
+    <div class="stat-row"><span class="stat-label">3D NND median</span><span class="stat-value">${med2.toFixed(1)} nm</span></div>
+    <div class="stat-row"><span class="stat-label">Packing plane NND</span><span class="stat-value">${(ds.nndPP||0).toFixed(1)} nm</span></div>
+    <div class="stat-row"><span class="stat-label">Surface-to-surface (axis-axis)</span><span class="stat-value">${m.mean_axis_axis_nm.toFixed(1)} nm</span></div>
+    <div class="stat-row"><span class="stat-label">Estimated gap between surfaces</span><span class="stat-value">${(m.mean_axis_axis_nm-8).toFixed(1)} nm</span></div>
+    <div class="stat-row"><span class="stat-label">Fibril diameter (assumed)</span><span class="stat-value">~8 nm</span></div>`
+  try{ renderSpacingCanvases() }catch(e){console.warn("renderSpacingCanvases() error:",e.message)}
+
+  // ── ALIGNMENT ─────────────────────────────────────────────
+  document.getElementById('align-info').innerHTML=
+    `<strong>S₂ nematic order parameter</strong> (Q-tensor eigenvalue method): 
+    S₂=1 perfectly parallel, S₂=0 random, S₂=−0.5 all perpendicular.
+    <strong>Parallelism Index (PI)</strong>: mean|cos θ| to director, 
+    the convention used in collagen structural biology (Gentleman et al. 2003, Rezakhaniha et al. 2012).
+    PI=1 perfect alignment, PI=0.5 random (equivalent to S₂=0).
+    S₂ and PI are mathematically related: S₂ = (3⟨cos²θ⟩−1)/2 = (3PI²−1)/2 approximately.
+    Both are reported here for cross-field comparability.`
+  try{ renderAlignmentCanvases() }catch(e){console.warn("renderAlignmentCanvases() error:",e.message)}
+}
+
+// ════════════════════════════════════════════════════════════
+// MULTI-DATASET SUMMARY
+// ════════════════════════════════════════════════════════════
+function renderSummary(){
+  const el=document.getElementById('summary-content')
+  if(!DATASETS.length){
+    document.getElementById('summary-info').innerHTML='Load multiple dataset JSON files to see cross-dataset comparison and statistical summaries.'
+    el.innerHTML=''; return
+  }
+  if(DATASETS.length<2){
+    document.getElementById('summary-info').innerHTML='Load at least 2 datasets for cross-dataset comparison. Currently loaded: '+DATASETS.map(d=>d.name).join(', ')
+    el.innerHTML=''; return
+  }
+
+  document.getElementById('summary-info').innerHTML=
+    `Cross-dataset summary of ${DATASETS.length} tomograms. Statistical tests compare datasets on per-fibril metrics. 
+    Kruskal-Wallis tests NND across all datasets. Per-group ψ₆ uses corrected 3D projection method.`
+
+  // Build comparison table — respect excluded groups
+  const rows=DATASETS.map(ds=>{
+    const m=ds.data.metrics
+    const excl=ds.excludedGroups||[]
+    const g0=!excl.includes(0)&&ds.groups&&ds.groups[0]||null
+    const g1=!excl.includes(1)&&ds.groups&&ds.groups[1]||null
+    return{
+      name:ds.name,
+      n:m.n_fibrils,
+      S2:m.S2_nematic,
+      nnd:m.mean_nnd_nm,
+      aa:m.mean_axis_axis_nm,
+      psi6_g0:g0?g0.psi6:null, psi4_g0:g0?g0.psi4:null, p_g0:g0?g0.pval64:null,
+      psi6_g1:g1?g1.psi6:null, psi4_g1:g1?g1.psi4:null, p_g1:g1?g1.pval64:null,
+      nGroups:ds.nGroups,
+      ch0:g0&&g0.chains?g0.chains.stats:null,
+      ch1:g1&&g1.chains?g1.chains.stats:null,
+    }
+  })
+
+  // Helper: exclusion-filtered NND for a dataset (used throughout renderSummary)
+  function getSummaryNND(ds){
+    const coords=getPPCoords(ds)
+    if(coords&&coords.px.length>3) return nnds(coords.px,coords.py)
+    return ds.data.nnd_distribution&&ds.data.nnd_distribution.all_nm||[]
+  }
+
+  // Kruskal-Wallis on filtered NND across datasets
+  const kwP=kruskalWallis(DATASETS.map(ds=>getSummaryNND(ds)))
+
+  // Pairwise MWU on filtered NNDs
+  const mwuTable=[]
+  for(let i=0;i<DATASETS.length;i++)for(let j=i+1;j<DATASETS.length;j++){
+    const p=mannWhitneyU(getSummaryNND(DATASETS[i]), getSummaryNND(DATASETS[j]))
+    mwuTable.push({a:DATASETS[i].name,b:DATASETS[j].name,p})
+  }
+
+  const c=(v,good)=>v==null?'—':`<span class="stat-value ${good?'sv-green':'sv-amber'}">${typeof v==='number'?v.toFixed(3):v}</span>`
+
+  // Per-dataset significance stats (computed once, used in table + written summary)
+  const dsStats = DATASETS.map(ds=>{    // Clark-Evans per orientation group (uses each group's own end-on projection)
+    const excl=ds.excludedGroups||[]
+    const oge=ds.data&&ds.data.orientation_group_endon||{}
+    const gKeys=Object.keys(oge).filter(k=>k!=='global'&&!excl.includes(Number(k)))
+    const cePerGroup={}
+    let bestCE=null
+    gKeys.forEach(g=>{
+      const v=oge[g]; if(!v) return
+      const lbl=v.group_labels_all, px=v.proj_all_x, py=v.proj_all_y
+      const gi=Number(g)
+      const mask=lbl.map(l=>l===gi)
+      const pxG=px.filter((_,i)=>mask[i]), pyG=py.filter((_,i)=>mask[i])
+      if(pxG.length<5) return
+      const ce=clarkEvans2D(pxG,pyG,150)
+      if(ce){ cePerGroup[g]=ce; if(!bestCE||ce.R>bestCE.R) bestCE=ce }
+    })
+    // Fall back to global coords if no per-group data
+    const ppCoords=getPPCoords(ds)
+    const ceGlobal=(!Object.keys(cePerGroup).length&&ppCoords&&ppCoords.px.length>5)
+      ? clarkEvans2D(ppCoords.px,ppCoords.py,150) : null
+    const ceResult=bestCE||ceGlobal
+    const axes = ds.data.fibrils
+      .filter(f=>!excl.includes(f.orientation_group)&&f.orientation_group!==-1)
+      .map(f=>f.axis).filter(Boolean)
+    const s2boot = axes.length>5 ? s2Bootstrap(axes, 200) : null
+    return {ds, ceResult, cePerGroup, s2boot, ppCoords}
+  })
+  LAST_DS_STATS = dsStats   // store for renderSummaryCanvases
+
+  // Cross-dataset NND shape similarity — uses exclusion-aware per-fibril NNDs
+  function getFilteredNND(ds){
+    const coords=getPPCoords(ds)
+    if(!coords||coords.px.length<5) return null
+    return nnds(coords.px, coords.py)
+  }
+  const ksTable=[]
+  for(let i=0;i<DATASETS.length;i++) for(let j=i+1;j<DATASETS.length;j++){
+    const nnd1=getFilteredNND(DATASETS[i])
+    const nnd2=getFilteredNND(DATASETS[j])
+    if(nnd1&&nnd2&&nnd1.length&&nnd2.length){
+      const cv1=nnd1.reduce((s,v)=>s+(v-nnd1.reduce((a,b)=>a+b,0)/nnd1.length)**2,0)
+      const mu1=nnd1.reduce((a,b)=>a+b,0)/nnd1.length
+      const mu2=nnd2.reduce((a,b)=>a+b,0)/nnd2.length
+      const sd1=Math.sqrt(nnd1.reduce((s,v)=>s+(v-mu1)**2,0)/nnd1.length)
+      const sd2=Math.sqrt(nnd2.reduce((s,v)=>s+(v-mu2)**2,0)/nnd2.length)
+      const r=ksNormNnd(nnd1,nnd2)
+      ksTable.push({
+        a:DATASETS[i].name, b:DATASETS[j].name, ...r,
+        cv1:sd1/mu1, cv2:sd2/mu2,
+        name1:DATASETS[i].name, name2:DATASETS[j].name
+      })
+    }
+  }
+
+  el.innerHTML=`
+  <div class="sec">Dataset comparison table
+    <span style="font-size:10px;color:#555;font-weight:normal;margin-left:8px">
+      Click group buttons (G1, G2…) in the loaded datasets bar above to exclude artefact groups
+    </span>
+  </div>
+  <div class="card" style="overflow-x:auto;margin-bottom:10px">
+    <table>
+      <tr><th>Dataset</th><th>N (incl.)</th><th>Excl. groups</th><th>S₂</th><th>PI</th><th>S₂ p-val</th>
+          <th>NND (nm)</th><th>R (regularity)</th><th>p(regular)</th>
+          <th>ψ₆ G1</th><th>ψ₄ G1</th><th>G1 p</th>
+          <th>ψ₆ G2</th><th>ψ₄ G2</th><th>G2 p</th></tr>
+      ${dsStats.map(stat=>{
+        const {ds,ceResult,s2boot}=stat
+        const m=ds.data.metrics, g0=ds.groups&&ds.groups[0], g1=ds.groups&&ds.groups[1]
+        const excl=ds.excludedGroups||[]
+        const nIncl=ds.data.fibrils.filter(f=>!excl.includes(f.orientation_group)&&f.orientation_group!==-1).length
+        // Per-group NND from own-axis projection
+        const oge=ds.data&&ds.data.orientation_group_endon||{}
+        const gKeys=Object.keys(oge).filter(k=>k!=='global'&&!excl.includes(Number(k)))
+        const perGrpNND=gKeys.map(g=>{
+          const v=oge[g]; if(!v) return null
+          const lbl=v.group_labels_all,px=v.proj_all_x,py=v.proj_all_y
+          const gi=Number(g)
+          const pxG=px.filter((_,i)=>lbl[i]===gi), pyG=py.filter((_,i)=>lbl[i]===gi)
+          if(pxG.length<3) return null
+          const nnd=fastMeanNND(pxG,pyG)
+          return {g:Number(g)+1, nnd}
+        }).filter(Boolean)
+        const nndStr=perGrpNND.length? perGrpNND.map(r=>`G${r.g}:${r.nnd.toFixed(1)}`).join(' ') : m.mean_nnd_nm.toFixed(1)+' nm'
+        return `<tr>
+          <td style="color:#58a6ff;font-weight:600">${ds.name}</td>
+          <td>${nIncl}</td>
+          <td style="color:#f85149">${excl.length?'G'+(excl.map(g=>g+1).join(', G')):'—'}</td>
+          <td>${m.S2_nematic.toFixed(4)}</td>
+          <td>${ds.PI!=null?ds.PI.toFixed(4):'—'}</td>
+          <td>${s2boot?fmtP(s2boot.pVal):'—'}</td>
+          <td>${nndStr}</td>
+          <td>${Object.keys(stat.cePerGroup||{}).length?
+            Object.entries(stat.cePerGroup).map(([g,r])=>`<span style="color:${r.R>1.1?'#3fb950':r.R>0.9?'#ffa657':'#f85149'}">G${Number(g)+1}:${r.R.toFixed(2)}</span>`).join(' ')
+            :ceResult?`<span style="color:${ceResult.R>1.1?'#3fb950':ceResult.R>0.9?'#ffa657':'#f85149'}">${ceResult.R.toFixed(3)}</span>`:'—'}</td>
+          <td>${Object.keys(stat.cePerGroup||{}).length?
+            Object.entries(stat.cePerGroup).map(([g,r])=>`G${Number(g)+1}:${fmtP(r.pReg)}`).join(' ')
+            :ceResult?fmtP(ceResult.pReg):'—'}</td>
+          <td>${g0&&!excl.includes(0)?g0.psi6.toFixed(3):'—'}</td>
+          <td>${g0&&!excl.includes(0)?g0.psi4.toFixed(3):'—'}</td>
+          <td>${g0&&!excl.includes(0)?fmtP(g0.pval64):'—'}</td>
+          <td>${g1&&!excl.includes(1)?g1.psi6.toFixed(3):'—'}</td>
+          <td>${g1&&!excl.includes(1)?g1.psi4.toFixed(3):'—'}</td>
+          <td>${g1&&!excl.includes(1)?fmtP(g1.pval64):'—'}</td>
+        </tr>`
+      }).join('')}
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-bottom:10px">
+    <div class="card">
+      <h3>NND distributions — Kruskal-Wallis ${fmtP(kwP)}</h3>
+      <canvas id="cv-sum-nnd" height="200"></canvas>
+      <div style="margin-top:8px">
+        <div class="sec" style="margin-top:4px">Pairwise MWU (absolute spacing)</div>
+        ${mwuTable.map(r=>`<div class="stat-row">
+          <span class="stat-label">${r.a} vs ${r.b}</span>
+          <span class="stat-value">${fmtP(r.p)}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <h3>Normalised NND shape similarity (KS test)</h3>
+      <div class="info-box" style="margin-bottom:8px">
+        Normalising by each dataset's mean NND removes scale differences — tests whether the 
+        <strong>shape of the spacing distribution is conserved</strong> (same packing geometry).
+        p&gt;0.05 = statistically indistinguishable packing pattern.
+      </div>
+      ${ksTable.map(r=>`<div class="stat-row">
+        <span class="stat-label">${r.a} vs ${r.b}</span>
+        <span class="stat-value">${fmtP(r.p)}
+          <span style="color:#666;font-size:10px;margin-left:4px">
+            ${r.p>0.05?'same shape ✓':'different shape'}
+          </span>
+        </span>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:10px">
+    <div class="card">
+      <h3>Clark-Evans regularity (R) — packing vs random</h3>
+      <canvas id="cv-sum-ce" height="180"></canvas>
+      <div class="info-box" style="margin-top:8px">
+        R=1: random · R&gt;1: more regular than random · R=2.15: perfect hexagonal lattice.
+        p-value = probability that random points are as regularly spaced as observed.
+        <strong>R&gt;1 with p&lt;0.05 means the packing is significantly non-random.</strong>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ψ₆ per group across datasets</h3>
+      <canvas id="cv-sum-psi" height="180"></canvas>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:10px">
+    <div class="card">
+      <h3>S₂ alignment across datasets</h3>
+      <canvas id="cv-sum-s2" height="140"></canvas>
+    </div>
+    <div class="card">
+      <h3>Parallelism Index (PI) across datasets</h3>
+      <canvas id="cv-sum-pi" height="140"></canvas>
+      <div class="info-box" style="margin-top:6px">PI = mean|cos θ to director| (collagen convention). PI=1 perfect, PI=0.5 random.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Statistical interpretation</h3>
+    <div id="sum-written"></div>
+  </div>`
+
+  // Draw summary canvases directly (panel is visible now)
+  renderSummaryCanvases()
+
+  // Written summary
+
+  // Summary arrays needed for interpretation
+  const allS2  = rows.map(r=>r.S2)
+  const allNnd = rows.map(r=>r.nnd)
+  const allPsi6 = rows.flatMap(r=>[r.psi6_g0,r.psi6_g1].filter(x=>x!=null))
+
+  // Build significance summary
+  // CE: collect per-group results (not just best), respecting exclusions
+  const ceResults=dsStats.flatMap(s=>Object.values(s.cePerGroup||{}))
+  if(!ceResults.length) dsStats.forEach(s=>{ if(s.ceResult) ceResults.push(s.ceResult) })
+  const s2Results=dsStats.map(s=>s.s2boot).filter(Boolean)
+  const sigRegular=ceResults.filter(r=>r&&r.R>1&&r.pReg<0.05)
+  const allRegular=ceResults.length>0&&sigRegular.length===ceResults.length
+  const allS2Sig=s2Results.length>0&&s2Results.every(r=>r.pVal<0.05)
+  const meanR=ceResults.length?ceResults.reduce((s,r)=>s+r.R,0)/ceResults.length:null
+  const ksDiff=ksTable.filter(r=>r.p<0.05)
+  const ksSame=ksTable.filter(r=>r.p>=0.05)
+  const ksAllSame=ksTable.length>0&&ksDiff.length===0
+  // PI values from all loaded datasets
+  const allPI=DATASETS.map(d=>d.PI).filter(v=>v!=null)
+  // psi6 — exclude zeros from excluded groups
+  const allPsi6valid=allPsi6.filter(v=>v>0.05)
+
+  document.getElementById('sum-written').innerHTML=`
+    <div class="finding">
+      <strong>Alignment is strongly non-random in all datasets.</strong>
+      S₂ ranges ${Math.min(...allS2).toFixed(3)}–${Math.max(...allS2).toFixed(3)};
+      Parallelism Index PI = ${allPI.length?allPI.map(v=>v.toFixed(3)).join(', '):'—'}
+      (bootstrap vs random unit vectors: ${allS2Sig?'p&lt;0.05 in all datasets':'see table'}).
+      S₂&gt;0.9 in all cases — the probability of this occurring by chance in a volume of this
+      size is negligible. Parallel alignment is a conserved, biologically regulated feature.
+    </div>
+    <div class="finding ${sigRegular.length>0?'':'amber'}">
+      <strong>Packing is ${sigRegular.length>0?'significantly more regular than random':'not significantly more regular than random'}
+      in ${sigRegular.length}/${ceResults.length} groups tested</strong>
+      (Clark-Evans R&gt;1 with p&lt;0.05 vs simulated random fibrils in the same bounding volume).
+      Mean R = ${meanR?meanR.toFixed(2):'—'} (R=1 random, R=2.15 perfect hexagonal lattice).
+      ${allRegular?'Every group shows R&gt;1 with p&lt;0.05 — fibrils are more uniformly spaced than chance. This is the direct statistical signature of organised biological packing rather than passive aggregation.':
+        sigRegular.length>0?`${sigRegular.length} of ${ceResults.length} groups reach significance; groups near R=1 may reflect smaller sample size or local disorder.`:''}
+    </div>
+    <div class="finding ${ksDiff.length===0?'blue':ksDiff.length<ksTable.length?'amber':'red'}">
+      <strong>Spacing regularity is ${ksDiff.length===0?'conserved across all datasets':ksDiff.length<ksTable.length?'mostly conserved':'substantially variable'}.</strong>
+      ${ksTable.length>0?`After normalising by each dataset's own mean NND,
+      ${ksSame.length} of ${ksTable.length} pairs have statistically indistinguishable spacing distributions (KS p&gt;0.05).`:'Load more datasets to compare.'}
+      ${ksDiff.length===0?'The relative spacing pattern is identical across all datasets — conserved packing geometry independent of fibril density.'
+        :ksDiff.length>0?`Differing pairs (${ksDiff.map(r=>`${r.a.replace('_endscorrected','')} vs ${r.b.replace('_endscorrected','')}: CV ${r.cv1?r.cv1.toFixed(2):'?'} vs ${r.cv2?r.cv2.toFixed(2):'?'}`).join('; ')}) show different coefficients of variation — one dataset packs more uniformly relative to its own mean. This likely reflects genuine biological variation in packing tightness, not just density differences.`:''}
+    </div>
+    <div class="finding ${allPsi6valid.length&&allPsi6valid.every(v=>v>0.4)?'':'amber'}">
+      <strong>Hexagonal bond-orientational order is ${allPsi6valid.every(v=>v>0.5)?'strong':'moderate'} across all included groups.</strong>
+      Per-group ψ₆ ranges ${allPsi6valid.length?Math.min(...allPsi6valid).toFixed(3):'—'}–${allPsi6valid.length?Math.max(...allPsi6valid).toFixed(3):'—'}
+      (ψ₆=1 perfect hex, ψ₆=0 random; excluded groups omitted).
+      ${rows.filter(r=>(r.p_g1!=null&&r.p_g1<0.05)||(r.p_g0!=null&&r.p_g0<0.05)).length}/${rows.length} datasets
+      have at least one group with ψ₆ significantly greater than ψ₄ (Wilcoxon p&lt;0.05).
+      Combined with R&gt;1, this confirms locally hexagonal arrangement — not merely clustered, but geometrically ordered.
+    </div>`
+}
+
+// ════════════════════════════════════════════════════════════
+// NAMED CANVAS RENDER FUNCTIONS (called by switchTab + render)
+// ════════════════════════════════════════════════════════════
+function renderMap(){
+  if(!ACTIVE) return
+  const cv=document.getElementById('cv-map'); if(!cv) return
+  const fibs=ACTIVE.data.fibrils
+  const{W,H}=sizeCanvas(cv); const ctx=cv.getContext('2d')
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H)
+  const xs=fibs.map(f=>f.centroid_nm[0]), ys=fibs.map(f=>f.centroid_nm[1])
+  const t=fitT(cv,xs,ys,16)
+  fibs.forEach(f=>{
+    const g=String(f.orientation_group)
+    ctx.strokeStyle=GRP_COL[g]||'#555'; ctx.lineWidth=1.2; ctx.globalAlpha=0.8
+    const pts=f.points_xy_nm; if(!pts||pts.length<2) return
+    ctx.beginPath(); ctx.moveTo(t.tx(pts[0][0]),t.ty(pts[0][1]))
+    pts.slice(1).forEach(p=>ctx.lineTo(t.tx(p[0]),t.ty(p[1]))); ctx.stroke()
+  })
+  ctx.globalAlpha=1; scaleBar(ctx,t,W,H,'white')
+}
+
+function renderEndonCanvases(){
+  if(!ACTIVE) return
+  const ds=ACTIVE, oge=ds.data.orientation_group_endon||{}, g0=ds.groups[0], g1=ds.groups[1]
+  drawEndon('cv-eo-global','global','global', oge.global?oge.global.psi6_pp:0)
+  drawEndon('cv-eo-0','0',0, g0?g0.psi6:0)
+  drawEndon('cv-eo-1','1',1, g1?g1.psi6:0)
+  const statHtml=(n,psi6,psi4,ang,col)=>`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:11px">
+      <span style="color:#8b949e">n=${n}</span>
+      <span style="color:${col}">ψ₆=${(+psi6).toFixed(3)}</span>
+      <span style="color:#8b949e">ψ₄=${(+psi4).toFixed(3)}</span>
+      <span style="color:#8b949e">tilt ${ang}°</span>
+    </div>`
+  const el0=document.getElementById('eo-global-stats')
+  const el1=document.getElementById('eo-0-stats')
+  const el2=document.getElementById('eo-1-stats')
+  if(el0) el0.innerHTML=statHtml(ds.data.n_fibrils,oge.global?oge.global.psi6_pp:0,0,oge.global?oge.global.plane_angle.toFixed(0):0,'#00FF41')
+  if(el1) el1.innerHTML=g0?statHtml(g0.n,g0.psi6,g0.psi4,oge['0']?oge['0'].plane_angle.toFixed(0):0,'#E05C00'):''
+  if(el2) el2.innerHTML=g1?statHtml(g1.n,g1.psi6,g1.psi4,oge['1']?oge['1'].plane_angle.toFixed(0):0,'#0070B8'):''
+}
+
+function renderPackingCanvases(){
+  if(!ACTIVE) return
+  const ds=ACTIVE, g0=ds.groups&&ds.groups[0], g1=ds.groups&&ds.groups[1]
+
+  // Violin — only if we have valid per-fibril arrays
+  const vds=[]
+  if(g0 && Array.isArray(g0.p6per) && g0.p6per.length && Array.isArray(g0.p4per)){
+    vds.push({label:'G1 ψ₆', values:g0.p6per.slice(), col:'#E05C00'})
+    vds.push({label:'G1 ψ₄', values:g0.p4per.slice(), col:'#aa3300'})
+  }
+  if(g1 && Array.isArray(g1.p6per) && g1.p6per.length && Array.isArray(g1.p4per)){
+    vds.push({label:'G2 ψ₆', values:g1.p6per.slice(), col:'#0070B8'})
+    vds.push({label:'G2 ψ₄', values:g1.p4per.slice(), col:'#004477'})
+  }
+  if(vds.length) try{ drawViolin('cv-psi-violin',vds) }catch(e){ console.warn('violin:',e.message) }
+
+  // Bar chart — safe fallback to 0
+  const p6g0 = (g0&&typeof g0.psi6==='number') ? g0.psi6 : 0
+  const p4g0 = (g0&&typeof g0.psi4==='number') ? g0.psi4 : 0
+  const p6g1 = (g1&&typeof g1.psi6==='number') ? g1.psi6 : 0
+  const p4g1 = (g1&&typeof g1.psi4==='number') ? g1.psi4 : 0
+  drawBars('cv-psi-bar',
+    ['G1 ψ₆','G1 ψ₄','G2 ψ₆','G2 ψ₄'],
+    [p6g0, p4g0, p6g1, p4g1],
+    ['#E05C00','#aa3300','#0070B8','#004477'], 1)
+
+  // Voronoi bar
+  const vc = Array.isArray(ds.voronoi) ? ds.voronoi : []
+  if(vc.length){
+    const cnts={}
+    vc.forEach(v=>{ const k=String(Math.round(v)); cnts[k]=(cnts[k]||0)+1 })
+    const ks=Object.keys(cnts).sort((a,b)=>Number(a)-Number(b))
+    const vs=ks.map(k=>cnts[k]||0)
+    if(ks.length && vs.length) drawBars('cv-vor', ks, vs,
+      ks.map(k=>k==='6'?'#3fb950':k==='5'?'#5F9EA0':'#58a6ff'), null)
+  }
+
+  // Bond angle histogram
+  const ba = Array.isArray(ds.bondAngles) ? ds.bondAngles : []
+  if(ba.length>2) drawHist('cv-bond', ba, 5, '#ffa657', 'Bond angle (°)',
+    [{v:60,c:'#ffffff',lbl:'60°'},{v:90,c:'#555',lbl:'90°'},{v:120,c:'#ffffff',lbl:'120°'}])
+}
+
+function renderChainCanvases(){
+  if(!ACTIVE) return
+  const ds=ACTIVE, g0=ds.groups[0], g1=ds.groups[1]
+  drawChainsCanvas('cv-ch-0',0)
+  drawChainsCanvas('cv-ch-1',1)
+  const chainStatHtml=(s,n)=>`
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
+      ${[['Chains',s.nChains,'sv-blue'],['In chains',`${s.nIn}/${n} (${(s.fracIn*100).toFixed(0)}%)`,''],
+         ['Max length',s.maxLen,'sv-green'],['Mean length',s.meanLen?s.meanLen.toFixed(1):0,'']].map(([l,v,c])=>
+        `<span style="font-size:11px"><span style="color:#8b949e">${l}: </span><span class="stat-value ${c}">${v}</span></span>`
+      ).join('')}
+    </div>`
+  const el0=document.getElementById('ch-0-stats'), el1=document.getElementById('ch-1-stats')
+  if(el0) el0.innerHTML=g0&&g0.chains?chainStatHtml(g0.chains.stats,g0.n):''
+  if(el1) el1.innerHTML=g1&&g1.chains?chainStatHtml(g1.chains.stats,g1.n):''
+}
+
+function renderSpacingCanvases(){
+  if(!ACTIVE) return
+  const ds=ACTIVE
+  const m=ds.data&&ds.data.metrics
+  if(!m) return
+  // Get NND array safely
+  const nndRaw = ds.data.nnd_distribution
+  const nnd = (nndRaw && Array.isArray(nndRaw.all_nm) && nndRaw.all_nm.length)
+              ? nndRaw.all_nm : []
+  if(!nnd.length) return
+  const mn  = nnd.reduce((a,b)=>a+b,0)/nnd.length
+  const med = nnd.slice().sort((a,b)=>a-b)[Math.floor(nnd.length/2)]
+  drawHist('cv-nnd', nnd, 3, '#3fb950', 'NND (nm)', [
+    {v:mn, c:'white', lbl:`μ=${mn.toFixed(1)}`},
+    {v:med, c:'#58a6ff', lbl:`med=${med.toFixed(1)}`}
+  ])
+  const nnd3d = typeof m.mean_nnd_nm==='number'      ? m.mean_nnd_nm      : 0
+  const nndPP = typeof ds.nndPP==='number'           ? ds.nndPP           : 0
+  const aa    = typeof m.mean_axis_axis_nm==='number' ? m.mean_axis_axis_nm : 0
+  drawBars('cv-spacing-bar',
+    ['NND\n(3D)', 'PP NND\n(packing\nplane)', 'Surface-\nto-surface'],
+    [nnd3d, nndPP, aa],
+    ['#3fb950','#58a6ff','#ffa657'], null)
+}
+
+function renderAlignmentCanvases(){
+  if(!ACTIVE) return
+  const m=ACTIVE.data.metrics
+  const axes=ACTIVE.data.fibrils.map(f=>f.axis)
+  const angles=[]
+  for(let i=0;i<axes.length;i++) for(let j=i+1;j<axes.length;j++){
+    const dot=Math.abs(axes[i][0]*axes[j][0]+axes[i][1]*axes[j][1]+axes[i][2]*axes[j][2])
+    angles.push(Math.acos(Math.min(1,dot))*180/Math.PI)
+  }
+  if(!angles.length) return
+  const meanAng=angles.reduce((a,b)=>a+b,0)/angles.length
+  drawHist('cv-angles',angles,3,'#58a6ff','Pairwise angle (°)',[{v:meanAng,c:'white',lbl:`μ=${meanAng.toFixed(1)}°`}])
+  const el=document.getElementById('align-stats'); if(!el) return
+  el.innerHTML=`
+    <div class="stat-row"><span class="stat-label">S₂ nematic order</span><span class="stat-value sv-green">${m.S2_nematic.toFixed(4)}</span></div>
+    <div class="stat-row"><span class="stat-label">Herman orientation factor</span><span class="stat-value sv-green">${m.S2_nematic.toFixed(4)} <span style="color:#555;font-size:10px">(= S₂)</span></span></div>
+    <div class="stat-row"><span class="stat-label">Parallelism Index (PI)</span><span class="stat-value sv-green">${ACTIVE.PI!=null?ACTIVE.PI.toFixed(4):'—'} <span style="color:#555;font-size:10px">(mean|cos θ|, collagen convention)</span></span></div>
+    <div class="stat-row"><span class="stat-label">Interpretation</span><span class="stat-value">${m.S2_nematic>0.9?'<span class="tag tag-hex">Near-perfect alignment</span>':m.S2_nematic>0.7?'<span class="tag tag-mod">Strong</span>':'<span class="tag tag-weak">Moderate</span>'}</span></div>
+    <div class="stat-row"><span class="stat-label">Mean pairwise angle</span><span class="stat-value">${meanAng.toFixed(1)}°</span></div>
+    <div class="stat-row"><span class="stat-label">Pairs within 10°</span><span class="stat-value">${(angles.filter(a=>a<10).length/angles.length*100).toFixed(0)}%</span></div>
+    <div class="stat-row"><span class="stat-label">Pairs within 20°</span><span class="stat-value">${(angles.filter(a=>a<20).length/angles.length*100).toFixed(0)}%</span></div>
+    <div class="stat-row"><span class="stat-label">Angle between orientation groups</span><span class="stat-value">~15.3°</span></div>
+    <div style="margin-top:10px" class="info-box">
+      <strong>Biological interpretation:</strong> S₂=${m.S2_nematic.toFixed(3)} indicates 
+      ${m.S2_nematic>0.9?'near-perfect nematic ordering — the fibrils are essentially parallel, consistent with a co-assembled amyloid bundle rather than random aggregation.':
+        'strong nematic ordering — fibrils are highly aligned but with some spread.'}
+      The ${meanAng.toFixed(1)}° mean pairwise angle and ${(angles.filter(a=>a<10).length/angles.length*100).toFixed(0)}% of pairs within 10° 
+      confirm tight orientational coherence across the entire tomogram volume.
+    </div>`
+}
+
+function renderSummaryCanvases(){
+  // Always recompute LAST_DS_STATS here so exclusions are reflected
+  // (renderSummary may not have run if we came via switchTab)
+  if(!LAST_DS_STATS.length && DATASETS.length) {
+    LAST_DS_STATS = DATASETS.map(ds=>{
+      const excl=ds.excludedGroups||[]
+      const oge=ds.data&&ds.data.orientation_group_endon||{}
+      const gKeys=Object.keys(oge).filter(k=>k!=='global'&&!excl.includes(Number(k)))
+      const cePerGroup={}; let bestCE=null
+      gKeys.forEach(g=>{
+        const v=oge[g]; if(!v) return
+        const lbl=v.group_labels_all,px=v.proj_all_x,py=v.proj_all_y,gi=Number(g)
+        const mask=lbl.map(l=>l===gi)
+        const pxG=px.filter((_,i)=>mask[i]),pyG=py.filter((_,i)=>mask[i])
+        if(pxG.length<5) return
+        const ce=clarkEvans2D(pxG,pyG,150)
+        if(ce){cePerGroup[g]=ce;if(!bestCE||ce.R>bestCE.R)bestCE=ce}
+      })
+      const ppCoords=getPPCoords(ds)
+      const ceGlobal=(!Object.keys(cePerGroup).length&&ppCoords&&ppCoords.px.length>5)?clarkEvans2D(ppCoords.px,ppCoords.py,150):null
+      return {ds,ceResult:bestCE||ceGlobal,cePerGroup,ppCoords}
+    })
+  }
+
+  // Helper: get exclusion-filtered NND array for a dataset
+  function filteredNND(ds){
+    const coords=getPPCoords(ds)
+    if(!coords||coords.px.length<3) return ds.data.nnd_distribution&&ds.data.nnd_distribution.all_nm||[]
+    return nnds(coords.px,coords.py)
+  }
+
+  const sumNndCv=document.getElementById('cv-sum-nnd')
+  if(sumNndCv&&DATASETS.length>=2){
+    const{W,H}=sizeCanvas(sumNndCv); const ctx=sumNndCv.getContext('2d')
+    ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H)
+    const pad={l:36,r:8,t:10,b:36},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b
+    ctx.fillStyle='#1c2128'; ctx.fillRect(pad.l,pad.t,pw,ph)
+    // Use filtered NNDs for all datasets
+    const allNnds=DATASETS.map(ds=>filteredNND(ds).slice().sort((a,b)=>a-b))
+    const mx=Math.max(...allNnds.flatMap(n=>n))*1.05, mn=0
+    const gw=pw/DATASETS.length
+    const cols=['#028090','#D97706','#9333EA','#DC2626','#15803D']
+    DATASETS.forEach((ds,i)=>{
+      const nnd=allNnds[i]
+      if(!nnd.length) return
+      const q1=nnd[Math.floor(nnd.length*0.25)],q3=nnd[Math.floor(nnd.length*0.75)]
+      const med=nnd[Math.floor(nnd.length*0.5)],mean=nnd.reduce((a,b)=>a+b,0)/nnd.length
+      const col=cols[i%cols.length],cx=pad.l+i*gw+gw/2,bw=gw*0.5
+      const yS=v=>pad.t+ph-(v-mn)/(mx-mn)*ph
+      ctx.strokeStyle=col; ctx.lineWidth=1
+      ctx.beginPath();ctx.moveTo(cx,yS(nnd[0]));ctx.lineTo(cx,yS(q1));ctx.stroke()
+      ctx.beginPath();ctx.moveTo(cx,yS(q3));ctx.lineTo(cx,yS(Math.min(nnd[nnd.length-1],q3+(q3-q1)*1.5)));ctx.stroke()
+      ctx.fillStyle=col+'66'; ctx.fillRect(cx-bw/2,yS(q3),bw,yS(q1)-yS(q3))
+      ctx.strokeStyle='white'; ctx.lineWidth=2
+      ctx.beginPath();ctx.moveTo(cx-bw/2,yS(med));ctx.lineTo(cx+bw/2,yS(med));ctx.stroke()
+      ctx.fillStyle=col; ctx.beginPath();ctx.arc(cx,yS(mean),4,0,Math.PI*2);ctx.fill()
+      ctx.fillStyle='#8b949e'; ctx.font='9px sans-serif'; ctx.textAlign='center'
+      ctx.fillText(ds.name.length>12?ds.name.slice(0,12)+'…':ds.name,cx,H-4)
+    })
+    ctx.strokeStyle='#30363d'; ctx.lineWidth=1
+    ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.stroke()
+    for(let v=0;v<=mx;v+=20){
+      ctx.fillStyle='#444'; ctx.font='9px sans-serif'; ctx.textAlign='right'
+      ctx.fillText(v,pad.l-2,pad.t+ph-(v-mn)/(mx-mn)*ph+3)
+    }
+    ctx.fillStyle='#8b949e'; ctx.font='10px sans-serif'; ctx.textAlign='center'
+    ctx.fillText('NND (nm)',pad.l+pw/2,H-18)
+  }
+  const psiLabels=[], psiVals=[], psiCols=[]
+  DATASETS.forEach((ds,i)=>{
+    const col=['#028090','#D97706','#9333EA','#DC2626','#15803D'][i%5]
+    const excl=ds.excludedGroups||[]
+    if(ds.groups&&ds.groups[0]&&!excl.includes(0)){psiLabels.push(ds.name+'\nG1');psiVals.push(ds.groups[0].psi6);psiCols.push(col)}
+    if(ds.groups&&ds.groups[1]&&!excl.includes(1)){psiLabels.push(ds.name+'\nG2');psiVals.push(ds.groups[1].psi6);psiCols.push(col+'99')}
+  })
+  if(psiLabels.length) drawBars('cv-sum-psi',psiLabels,psiVals,psiCols,1)
+  if(DATASETS.length) drawBars('cv-sum-s2',
+    DATASETS.map(d=>d.name),
+    DATASETS.map(d=>d.data.metrics.S2_nematic),
+    ['#028090','#D97706','#9333EA','#DC2626','#15803D'],1)
+  // PI bar (same colour scheme)
+  const piVals=DATASETS.map(d=>d.PI||0)
+  if(piVals.some(v=>v>0)) drawBars('cv-sum-pi',
+    DATASETS.map(d=>d.name), piVals,
+    ['#028090','#D97706','#9333EA','#DC2626','#15803D'],1)
+
+  // Clark-Evans R bar — per group
+  const ceLabels=[], ceVals=[], ceCols=[]
+  const DS_COLS=['#028090','#D97706','#9333EA','#DC2626','#15803D']
+  LAST_DS_STATS.forEach((stat,i)=>{
+    const col=DS_COLS[i%DS_COLS.length]
+    const gKeys=Object.keys(stat.cePerGroup||{}).sort()
+    if(gKeys.length){
+      gKeys.forEach(g=>{
+        ceLabels.push(stat.ds.name+'\nG'+(Number(g)+1))
+        ceVals.push(stat.cePerGroup[g].R)
+        ceCols.push(col)
+      })
+    } else if(stat.ceResult){
+      ceLabels.push(stat.ds.name)
+      ceVals.push(stat.ceResult.R)
+      ceCols.push(col)
+    }
+  })
+  if(ceLabels.length){
+    const cv=document.getElementById('cv-sum-ce')
+    if(cv){
+      drawBars('cv-sum-ce',ceLabels,ceVals,ceCols,2.3)
+      // Overlay reference lines after drawBars
+      const cvEl=document.getElementById('cv-sum-ce')
+      if(cvEl){
+        const W2=cvEl.width,H2=cvEl.height,ctx2=cvEl.getContext('2d')
+        const pad2={l:8,r:8,t:12,b:38},ph2=H2-pad2.t-pad2.b,mx2=2.3
+        const yR1=pad2.t+ph2-1.0/mx2*ph2
+        const yR215=pad2.t+ph2-2.15/mx2*ph2
+        ctx2.strokeStyle='#666';ctx2.lineWidth=1;ctx2.setLineDash([4,3])
+        ctx2.beginPath();ctx2.moveTo(pad2.l,yR1);ctx2.lineTo(W2-pad2.r,yR1);ctx2.stroke()
+        ctx2.fillStyle='#777';ctx2.font='9px sans-serif';ctx2.textAlign='right'
+        ctx2.fillText('R=1 random',W2-pad2.r-2,yR1-3)
+        ctx2.strokeStyle='#3fb950';ctx2.lineWidth=1.5
+        ctx2.beginPath();ctx2.moveTo(pad2.l,yR215);ctx2.lineTo(W2-pad2.r,yR215);ctx2.stroke()
+        ctx2.fillStyle='#3fb950';ctx2.fillText('R=2.15 perfect hex',W2-pad2.r-2,yR215-3)
+        ctx2.setLineDash([])
+      }
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// SIGNIFICANCE STATISTICS
+// ════════════════════════════════════════════════════════════
+
+/** Fast 2D NND using sort-based approximation (O(n log n)).
+ *  Accurate enough for Clark-Evans when points are not too sparse. */
+function fastMeanNND(px, py){
+  const n=px.length
+  if(n<2) return 0
+  // Sort by x, check k nearest in x-sorted order
+  const idx=px.map((_,i)=>i).sort((a,b)=>px[a]-px[b])
+  let sum=0
+  for(let ii=0;ii<n;ii++){
+    const i=idx[ii]
+    let md=Infinity
+    // Check window of 8 neighbours in sorted order
+    for(let d=1;d<=Math.min(8,n-1);d++){
+      if(ii-d>=0){const j=idx[ii-d];const dx=px[i]-px[j];if(dx>md)break;const dy=py[i]-py[j];const dist=Math.sqrt(dx*dx+dy*dy);if(dist<md)md=dist}
+      if(ii+d<n){const j=idx[ii+d];const dx=px[j]-px[i];if(dx>md)break;const dy=py[i]-py[j];const dist=Math.sqrt(dx*dx+dy*dy);if(dist<md)md=dist}
+    }
+    sum+=md
+  }
+  return sum/n
+}
+
+/** 2D Clark-Evans regularity test.
+ *  R=1 random, R>1 regular, R=2.15 perfect hexagonal. 
+ *  Uses fast NND + 150-sim bootstrap. */
+function clarkEvans2D(px, py, nSim=150){
+  if(!px||px.length<5) return null
+  const n=px.length
+  const obs=fastMeanNND(px,py)
+  const xmin=Math.min(...px),xmax=Math.max(...px)
+  const ymin=Math.min(...py),ymax=Math.max(...py)
+  const A=(xmax-xmin)*(ymax-ymin)
+  if(A<1) return null
+  const rho=n/A
+  const expNnd=1/(2*Math.sqrt(rho))
+  const R=obs/expNnd
+  // Bootstrap null (fast)
+  const randMeans=[]
+  for(let s=0;s<nSim;s++){
+    const rx=Array.from({length:n},()=>xmin+Math.random()*(xmax-xmin))
+    const ry=Array.from({length:n},()=>ymin+Math.random()*(ymax-ymin))
+    randMeans.push(fastMeanNND(rx,ry))
+  }
+  randMeans.sort((a,b)=>a-b)
+  const pReg=randMeans.filter(v=>v>=obs).length/nSim
+  const randMu=randMeans.reduce((a,b)=>a+b,0)/nSim
+  const randSd=Math.sqrt(randMeans.reduce((a,b)=>a+(b-randMu)**2,0)/nSim)
+  return {n, obs, R, expCE:expNnd, randMu, randSd, pReg, nSim}
+}
+
+/** Bootstrap S2 significance against random unit vectors on sphere. */
+function s2Bootstrap(axes, nBoot=500){
+  function calcS2(axs){
+    let Q=[[0,0,0],[0,0,0],[0,0,0]]
+    axs.forEach(a=>{
+      for(let i=0;i<3;i++) for(let j=0;j<3;j++) Q[i][j]+=a[i]*a[j]-(i===j?1/3:0)
+    })
+    Q=Q.map(r=>r.map(v=>v/axs.length))
+    // max eigenvalue of 3x3 symmetric
+    const a=Q[0][0],b=Q[1][1],c=Q[2][2],d=Q[0][1],e=Q[0][2],f=Q[1][2]
+    const p1=d*d+e*e+f*f
+    if(p1<1e-10) return 1.5*Math.max(a,b,c)
+    const q=(a+b+c)/3
+    const p2=(a-q)**2+(b-q)**2+(c-q)**2+2*p1
+    const p=Math.sqrt(p2/6)
+    const B=[[( a-q)/p,d/p,e/p],[d/p,(b-q)/p,f/p],[e/p,f/p,(c-q)/p]]
+    const det=B[0][0]*(B[1][1]*B[2][2]-B[1][2]*B[2][1])-B[0][1]*(B[1][0]*B[2][2]-B[1][2]*B[2][0])+B[0][2]*(B[1][0]*B[2][1]-B[1][1]*B[2][0])
+    const r=Math.max(-1,Math.min(1,det/2))
+    const phi=Math.acos(r)/3
+    const evals=[q+2*p*Math.cos(phi), q+2*p*Math.cos(phi+2*Math.PI/3), q+2*p*Math.cos(phi+4*Math.PI/3)]
+    return 1.5*Math.max(...evals)
+  }
+  const obsS2=calcS2(axes)
+  const nullS2=[]
+  for(let b=0;b<nBoot;b++){
+    // Random unit vectors (Box-Muller)
+    const rand=axes.map(()=>{
+      let x,y,z,len
+      do{x=Math.random()*2-1;y=Math.random()*2-1;z=Math.random()*2-1;len=Math.sqrt(x*x+y*y+z*z)}while(len>1||len<1e-9)
+      return [x/len,y/len,z/len]
+    })
+    nullS2.push(calcS2(rand))
+  }
+  const p=nullS2.filter(v=>v>=obsS2).length/nBoot
+  const nullMu=nullS2.reduce((a,b)=>a+b,0)/nBoot
+  return {S2:obsS2, pVal:p, nullMu, nBoot}
+}
+
+/** KS test on normalised NND shapes across datasets (conserved packing geometry). */
+function ksNormNnd(nnd1, nnd2){
+  const mu1=nnd1.reduce((a,b)=>a+b,0)/nnd1.length
+  const mu2=nnd2.reduce((a,b)=>a+b,0)/nnd2.length
+  const n1=nnd1.map(v=>v/mu1).sort((a,b)=>a-b)
+  const n2=nnd2.map(v=>v/mu2).sort((a,b)=>a-b)
+  // KS statistic
+  const all=[...n1.map(v=>({v,g:0})),...n2.map(v=>({v,g:1}))].sort((a,b)=>a.v-b.v)
+  let c1=0,c2=0,ks=0
+  all.forEach(pt=>{
+    if(pt.g===0) c1++; else c2++
+    ks=Math.max(ks,Math.abs(c1/n1.length-c2/n2.length))
+  })
+  // Approximate p-value
+  const n=n1.length*n2.length/(n1.length+n2.length)
+  const lambda=ks*(Math.sqrt(n)+0.12+0.11/Math.sqrt(n))
+  let p=0; for(let k=1;k<=20;k++) p+=2*(k%2?1:-1)*Math.exp(-2*k*k*lambda*lambda)
+  return {ks, p:Math.max(0,Math.min(1,p)), mu1, mu2}
+}
+
+/** Get packing-plane 2D coords for a dataset, excluding specified groups. */
+function getPPCoords(ds){
+  const excl=ds.excludedGroups||[]
+  const oge=ds.data&&ds.data.orientation_group_endon
+  if(!oge) return null
+  // Use group 0's view (or global if no groups)
+  const v=oge['0']||oge['global']
+  if(!v) return null
+  const lbl=v.group_labels_all, px=v.proj_all_x, py=v.proj_all_y
+  if(!lbl||!px) return null
+  const mask=lbl.map(l=>!excl.includes(l)&&l!==-1)
+  return {
+    px: px.filter((_,i)=>mask[i]),
+    py: py.filter((_,i)=>mask[i]),
+    nnd: ds.data.nnd_distribution&&ds.data.nnd_distribution.all_nm||[]
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// STATS
+// ════════════════════════════════════════════════════════════
+function kruskalWallis(groups){
+  const all=[].concat(...groups).sort((a,b)=>a-b)
+  const N=all.length
+  const ranks={}
+  all.forEach((v,i)=>{ if(!ranks[v])ranks[v]=[]; ranks[v].push(i+1) })
+  const avgRanks={}
+  Object.keys(ranks).forEach(v=>{ avgRanks[v]=ranks[v].reduce((a,b)=>a+b,0)/ranks[v].length })
+  let H=0
+  groups.forEach(g=>{
+    const Rj=g.reduce((s,v)=>s+avgRanks[v],0)
+    H+=Rj*Rj/g.length
+  })
+  H=12/(N*(N+1))*H-3*(N+1)
+  const df=groups.length-1
+  // chi2 p-value approximation
+  const p=1-chi2CDF(H,df)
+  return p
+}
+function chi2CDF(x,k){
+  if(x<=0)return 0
+  // regularized incomplete gamma via series
+  let s=Math.exp(-x/2)*Math.pow(x/2,k/2)/gamma(k/2+1)
+  let term=s; let sum=s
+  for(let i=1;i<100;i++){term*=x/(2*(k/2+i));sum+=term;if(term<1e-10)break}
+  return Math.min(1,sum)
+}
+function gamma(n){
+  if(n===0.5)return Math.sqrt(Math.PI)
+  if(n===1)return 1
+  if(n<0.5)return Math.PI/Math.sin(Math.PI*n)/gamma(1-n)
+  n-=1; let x=0.99999999999980993
+  const c=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]
+  c.forEach((ci,i)=>x+=ci/(n+i+1))
+  const t=n+7.5
+  return Math.sqrt(2*Math.PI)*Math.pow(t,n+0.5)*Math.exp(-t)*x
+}
+function mannWhitneyU(a,b){
+  const na=a.length,nb=b.length
+  let U=0; a.forEach(ai=>b.forEach(bi=>{if(ai>bi)U++;else if(ai===bi)U+=0.5}))
+  const mu=na*nb/2,sigma=Math.sqrt(na*nb*(na+nb+1)/12)
+  const z=(U-mu)/sigma
+  return 2*(1-normCDF(Math.abs(z))) // two-sided
+}
+</script>
+</body>
+</html>

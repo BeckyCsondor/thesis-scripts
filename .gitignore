@@ -1,0 +1,43 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# --- R ---
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# --- MATLAB ---
+*.asv
+*.m~
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+
+# --- Data / outputs (large or subject-specific; don't commit raw data) ---
+*.mrc
+*.tif
+*.tiff
+*.mod
+*.rec
+*.st
+*.csv
+*.json
+!fibril_data_example.json
+data/
+raw_data/
+outputs/
+figures/
+*.pdf
+*.png
+!**/example_output/*.png
+
+# --- Logs ---
+*.log
