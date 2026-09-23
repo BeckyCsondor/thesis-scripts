@@ -19,7 +19,7 @@ related analysis of PI+ (dead/dying) nuclei proximity to Tau+ puncta.
 ## Viability quantification
 
 **`PI_Hoechst_Viability_Batch.ijm`** — FIJI batch macro. Channel assignment
-differs by condition (confirm this matches your acquisition before running):
+differs by condition, as follows:
 
 | Condition | Ch1 | Ch2 | Ch3 |
 |---|---|---|---|
@@ -113,13 +113,11 @@ Rscript nearest_neighbour_plot.R
 ## Notes / things to check before relying on this for the thesis
 
 - Both R scripts use hardcoded, pasted-in data rather than reading from a
-  CSV — fine for a one-off figure, but a risk if you rerun the macros and
-  forget to update the numbers in the R script. Consider refactoring to
-  read from CSV directly if you'll regenerate these figures more than once.
-- The channel assignment table above differs per condition — this is easy
-  to get wrong when batch-processing; worth double-checking image titles
-  match the expected condition before running.
-- `NearestNeighbour_TauPI.ijm` requires manual copy-paste of results from
-  the Fiji Log into the R script — no direct file export. Consider adding a
-  `File.saveString(...)` call to the macro if you'll be running this on many
+  CSV rather than reading it directly, so the values in the R script must be
+  updated if the macros are rerun.
+- The channel assignment table above differs per condition, so image titles
+  must match the expected condition when batch-processing.
+- `NearestNeighbour_TauPI.ijm` outputs results to the Fiji Log, which are
+  transferred manually into the R script rather than exported directly. This
+  is workable for the small number of samples analysed here, but on many
   images, to avoid transcription errors.

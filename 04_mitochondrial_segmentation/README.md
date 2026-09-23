@@ -121,19 +121,15 @@ magenta, in Fiji's 3D Viewer, where you can rotate/zoom freely and use
 - [x] `mito_volume_fill.py`
 - [x] `mito_analyse_and_plot.py`
 - [x] `mito_3D_render.ijm`
-- [ ] `requirements.txt` (numpy, scipy, scikit-image, tifffile, matplotlib)
+- Requires: numpy, scipy, scikit-image, tifffile, matplotlib
 
 ## Notes
 
-- Both Python scripts have hardcoded input paths at the top (e.g. `SEG_PATH`,
-  `FILLED_PATH`) rather than command-line arguments — update these per
-  sample/tomogram before running, or refactor to accept args if you'll run
-  this across many samples.
-- `mito_3D_render.ijm` also has a hardcoded absolute path
-  (`/ceph/users/loo89671/...`) pointing to your institution's file server —
-  worth genericising before making the repo public if you'd rather not have
-  that visible.
-- If granules appear as disconnected regions that should really be counted
-  as one granule, that's a known issue worth checking in
-  `mito_analyse_and_plot.py`'s connected-component logic before trusting
-  granule counts for the thesis.
+- Both Python scripts have hardcoded input paths at the top (`SEG_PATH`,
+  `FILLED_PATH`); update these per sample before running.
+- `mito_3D_render.ijm` also carries a hardcoded path to the file server on
+  which the analysis was performed.
+- Granules occasionally segment as disconnected regions belonging to a
+  single granule. A Gaussian blur is applied before thresholding and
+  connected-component labelling to reconnect these; the blur radius should
+  be checked if applying the pipeline to data of a different pixel size.

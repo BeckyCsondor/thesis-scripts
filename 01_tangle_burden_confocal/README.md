@@ -37,8 +37,8 @@ followed by R statistics and publication figures.
 - Voxel size: 0.577 x 0.577 x 0.4985 µm (x, y, z)
 - Tau channel Gaussian blur (pre-segmentation): x=0.8, y=0.8, z=0.5 µm
 - Volume filters: min 10 µm³ debris filter; max varies by macro (10000 µm³ in
-  `TangleBurdenMacro.ijm`, 200 µm³ in `PostProcessing_TangleBurdenMacro.ijm`
-  to exclude large outliers — check these match your intent before running)
+  `TangleBurdenMacro.ijm`, 200 µm³ in `PostProcessing_TangleBurdenMacro.ijm`,
+  the latter applied to exclude merged or artefactual objects)
 
 ## Usage
 
@@ -68,8 +68,6 @@ tomogram/sample, not left at this value.
 ## Notes / things to check before relying on this for the thesis
 
 - The grouped-comparison block (WT vs Mutant) in `burden_analysis.R` is
-  commented out — uncomment and adjust if your final analysis needs
-  group-level stats, not just pooled.
-- `Burden_percent` values are printed to 4 decimal places in the R output —
-  sanity-check that precision is appropriate/consistent with the rest of the
-  thesis before finalising figures.
+  commented out; the analysis reported in the thesis is the pooled version.
+- `Burden_percent` values are printed to 4 decimal places in the R output
+  and rounded for presentation in the thesis.
