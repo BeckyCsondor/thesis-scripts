@@ -32,10 +32,19 @@ outputs, and how to run it.
 
 ## Use of AI assistance
 
-Scripts in this repository were developed with the assistance of Claude
-(Anthropic). Where a script was substantially written or restructured with
-that assistance, this is noted in the header comment of the script itself
-and in the relevant folder README.
+Claude (Anthropic) was used during the development of this work. Its
+contribution differed by pipeline:
+
+| Pipeline | Use |
+|---|---|
+| 01_tangle_burden_confocal | Debugging and refinement of macros written by the author |
+| 02_pi_hoechst_viability | Debugging and refinement of macros written by the author |
+| 03_fibril_organisation | Scripts substantially written with Claude's assistance, from analysis designs specified by the author |
+| 04_mitochondrial_segmentation | Scripts substantially written with Claude's assistance |
+| 05_statistics_and_figures | Figure scripts and statistical testing written with Claude's assistance |
+
+In all cases the analyses, parameters and interpretation are the author's
+own, and all outputs were checked against the underlying data.
 
 ## Citation
 
